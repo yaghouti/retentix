@@ -32,8 +32,7 @@ export interface PolicyMetadata {
  * Data Sources
  * ================================================== */
 
-export type DataSource =
-  | PostgresSource;
+export type DataSource = PostgresSource;
 
 export interface PostgresSource {
   kind: "postgres";
@@ -55,10 +54,7 @@ export interface Entity {
  * Retention
  * ================================================== */
 
-export type RetentionAction =
-  | DeleteAction
-  | NoneAction
-  | AnonymizeAction;
+export type RetentionAction = DeleteAction | NoneAction | AnonymizeAction;
 
 export interface RetentionRule {
   entity: string;
@@ -99,9 +95,7 @@ export interface FieldMask {
 
 /* -------- Masking Strategies -------- */
 
-export type MaskingStrategy =
-  | HashMask
-  | NullMask;
+export type MaskingStrategy = HashMask | NullMask;
 
 export interface HashMask {
   kind: "hash";
@@ -166,10 +160,7 @@ export interface AuditReportConfig {
   include: AuditReportSection[];
 }
 
-export type AuditReportSection =
-  | "policy_metadata"
-  | "execution_summary"
-  | "affected_records";
+export type AuditReportSection = "policy_metadata" | "execution_summary" | "affected_records";
 
 /* ==================================================
  * Value Objects
