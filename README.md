@@ -1,5 +1,10 @@
 # Retentix
 
+[![CI](https://github.com/yaghouti/Retentix/actions/workflows/ci.yml/badge.svg)](https://github.com/yaghouti/Retentix/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/yaghouti/Retentix/branch/main/graph/badge.svg)](https://codecov.io/gh/yaghouti/Retentix)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D24.0.0-brightgreen)](https://nodejs.org/)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+
 Automated GDPR Data Retention & Erasure for HR SaaS
 
 ## Requirements
@@ -48,6 +53,9 @@ pnpm test:coverage
 ### Code Quality:
 
 ```bash
+# Type check
+pnpm type-check
+
 # Format code
 pnpm format
 
@@ -140,6 +148,44 @@ pnpm test:coverage
 ```
 
 Coverage reports are generated in the `coverage/` directory.
+
+## CI/CD
+
+This project uses GitHub Actions for continuous integration:
+
+### Workflows
+
+- **CI** (`ci.yml`): Runs on every push and PR
+  - Linting and formatting checks (Biome)
+  - Type checking (TypeScript)
+  - Unit and integration tests (Vitest)
+  - Code coverage reporting (95%+)
+  - Security audit (`pnpm audit`)
+
+- **Release** (`release.yml`): Automated releases
+  - Triggered by version tags (e.g., `v0.0.1`)
+  - Runs full test suite
+  - Creates GitHub release with notes
+
+### Dependabot
+
+Automated dependency updates via `dependabot.yml`:
+- Weekly updates for npm packages and GitHub Actions
+- Grouped updates for minor and patch versions
+- Automatic security updates
+
+### Status Checks
+
+All PRs must pass:
+- ✅ Linting and formatting
+- ✅ Type checking
+- ✅ All tests passing (53 tests)
+- ✅ Code coverage maintained (95%+)
+- ✅ Security audit
+
+## Security
+
+Please see [SECURITY.md](.github/SECURITY.md) for security policies and reporting vulnerabilities.
 
 ## Notes
 
