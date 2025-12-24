@@ -1,0 +1,45 @@
+{
+  "name": "retentix",
+  "version": "0.0.1",
+  "description": "Automated GDPR Data Retention & Erasure for HR SaaS",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "node --experimental-strip-types index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --write ."
+  },
+  "dependencies": {
+    "yaml": "^2.8.2",
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.10",
+    "@types/node": "^24.0.0",
+    "@vitest/coverage-v8": "^4.0.16",
+    "@vitest/ui": "^4.0.16",
+    "vitest": "^4.0.16"
+  },
+  "homepage": "https://github.com/yaghouti/Retentix#readme",
+  "bugs": {
+    "url": "https://github.com/yaghouti/Retentix/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yaghouti/Retentix.git"
+  },
+  "license": "ISC",
+  "author": "Majid Yaghouti",
+  "packageManager": "pnpm@10.26.2",
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}
