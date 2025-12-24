@@ -29,6 +29,22 @@ node --experimental-strip-types example.ts path/to/policy.yaml
 pnpm dev
 ```
 
+### Testing:
+
+```bash
+# Run tests once
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Run tests with UI
+pnpm test:ui
+
+# Run tests with coverage report
+pnpm test:coverage
+```
+
 ### Code Quality:
 
 ```bash
@@ -58,15 +74,19 @@ pnpm check:fix
 - **ESM Modules**: Modern ES modules with `.ts` extensions
 - **Strict Type Checking**: Full TypeScript strict mode enabled
 - **Code Quality**: Biome for fast formatting and linting
+- **Comprehensive Testing**: Vitest with 95%+ code coverage
 
 ## Project Structure
 
 ```
 policy/
-  ├── types.ts      # Domain type definitions
-  ├── schema.ts     # Zod validation schemas
-  ├── parser.ts     # Parse validated data to domain types
-  └── validate.ts   # Load and validate YAML policies
+  ├── types.ts           # Domain type definitions
+  ├── schema.ts          # Zod validation schemas
+  ├── schema.test.ts     # Schema validation tests
+  ├── parser.ts          # Parse validated data to domain types
+  ├── parser.test.ts     # Parser tests
+  ├── validate.ts        # Load and validate YAML policies
+  └── validate.test.ts   # Validation tests
 ```
 
 ## Type Safety
@@ -92,9 +112,39 @@ For the best experience, install the Biome extension for your editor:
 - VS Code/Cursor: [Biome Extension](https://marketplace.visualstudio.com/items?itemName=biomejs.biome)
 - Other editors: See [Biome Editor Integration](https://biomejs.dev/guides/editors/first-party-extensions/)
 
+## Testing
+
+This project uses **Vitest** for unit testing with comprehensive test coverage.
+
+### Test Coverage
+
+- **53 tests** across 4 test suites
+- **95%+ code coverage** (statements, branches, functions, lines)
+- Unit tests for schema validation, parsing logic, and file loading
+- Integration tests for end-to-end policy processing
+
+### Running Tests
+
+```bash
+# Run all tests
+pnpm test
+
+# Watch mode for development
+pnpm test:watch
+
+# Interactive UI
+pnpm test:ui
+
+# Generate coverage report
+pnpm test:coverage
+```
+
+Coverage reports are generated in the `coverage/` directory.
+
 ## Notes
 
 - When using `type: null` in YAML files, make sure to quote it as `type: "null"` to prevent YAML from parsing it as an actual null value
 - The project uses ESM modules with `.ts` extensions in imports
 - Node.js 24's `--experimental-strip-types` flag strips TypeScript types at runtime without compilation
 - Run `pnpm check:fix` before committing to ensure code quality
+- Run `pnpm test` to verify all tests pass before committing
