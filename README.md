@@ -95,6 +95,15 @@ policy/
   ├── parser.test.ts     # Parser tests
   ├── validate.ts        # Load and validate YAML policies
   └── validate.test.ts   # Validation tests
+
+engine/
+  ├── index.ts           # Main engine entry point
+  ├── retention.ts       # Retention rule execution
+  ├── context.ts         # Execution context types
+  ├── audit.ts           # Audit logging
+  └── postgres/
+      ├── client.ts      # PostgreSQL client setup
+      └── retention.ts   # PostgreSQL retention implementation
 ```
 
 ## Type Safety
