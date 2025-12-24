@@ -156,34 +156,31 @@ This project uses GitHub Actions for continuous integration:
 ### Workflows
 
 - **CI** (`ci.yml`): Runs on every push and PR
-  - Linting and formatting checks
-  - Type checking
-  - Unit and integration tests
-  - Code coverage reporting
-  - Security audit
+  - Linting and formatting checks (Biome)
+  - Type checking (TypeScript)
+  - Unit and integration tests (Vitest)
+  - Code coverage reporting (95%+)
+  - Security audit (`pnpm audit`)
 
 - **Release** (`release.yml`): Automated releases
   - Triggered by version tags (e.g., `v0.0.1`)
   - Runs full test suite
   - Creates GitHub release with notes
 
-- **Dependency Review** (`dependency-review.yml`): Reviews dependencies in PRs
-  - Checks for security vulnerabilities
-  - Validates licenses
-
 ### Dependabot
 
 Automated dependency updates via `dependabot.yml`:
 - Weekly updates for npm packages and GitHub Actions
 - Grouped updates for minor and patch versions
+- Automatic security updates
 
 ### Status Checks
 
 All PRs must pass:
 - ✅ Linting and formatting
 - ✅ Type checking
-- ✅ All tests passing
-- ✅ Code coverage maintained
+- ✅ All tests passing (53 tests)
+- ✅ Code coverage maintained (95%+)
 - ✅ Security audit
 
 ## Security
