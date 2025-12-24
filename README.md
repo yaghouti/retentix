@@ -1,7 +1,6 @@
 # Retentix
 
 [![CI](https://github.com/yaghouti/Retentix/actions/workflows/ci.yml/badge.svg)](https://github.com/yaghouti/Retentix/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/yaghouti/Retentix/actions/workflows/codeql.yml/badge.svg)](https://github.com/yaghouti/Retentix/actions/workflows/codeql.yml)
 [![codecov](https://codecov.io/gh/yaghouti/Retentix/branch/main/graph/badge.svg)](https://codecov.io/gh/yaghouti/Retentix)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D24.0.0-brightgreen)](https://nodejs.org/)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
@@ -54,6 +53,9 @@ pnpm test:coverage
 ### Code Quality:
 
 ```bash
+# Type check
+pnpm type-check
+
 # Format code
 pnpm format
 
@@ -159,11 +161,6 @@ This project uses GitHub Actions for continuous integration:
   - Unit and integration tests
   - Code coverage reporting
   - Security audit
-
-- **CodeQL** (`codeql.yml`): Security analysis
-  - Runs on push, PR, and weekly schedule
-  - Identifies security vulnerabilities
-  - Analyzes code quality
 
 - **Release** (`release.yml`): Automated releases
   - Triggered by version tags (e.g., `v0.0.1`)
