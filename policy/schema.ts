@@ -39,7 +39,7 @@ const PostgresSourceSchema = z.object({
 
 const DataSourceSchema = z.union([PostgresSourceSchema]);
 
-const SourcesSchema = z.record(DataSourceSchema);
+const SourcesSchema = z.record(z.string(), DataSourceSchema);
 
 /* --------------------------------------------------
  * Entities
@@ -52,7 +52,7 @@ const EntitySchema = z.object({
   created_at: z.string()
 });
 
-const EntitiesSchema = z.record(EntitySchema);
+const EntitiesSchema = z.record(z.string(), EntitySchema);
 
 /* --------------------------------------------------
  * Retention Rules
@@ -93,14 +93,14 @@ const NullMaskSchema = z.object({
   type: z.literal("null")
 });
 
-const MaskingStrategySchema = z.union([HashMaskSchema, NullMaskSchema]);
+const MaskingStrategySchema = z.discriminatedUnion("type", [HashMaskSchema, NullMaskSchema]);
 
 const MaskingSchema = z.object({
-  strategies: z.record(MaskingStrategySchema),
+  strategies: z.record(z.string(), MaskingStrategySchema),
   rules: z.array(
     z.object({
       entity: z.string(),
-      fields: z.record(
+      fields: z.record(z.string(),
         z.object({
           strategy: z.string()
         })
@@ -115,14 +115,14 @@ const MaskingSchema = z.object({
 
 const ErasureTriggerSchema = z.object({
   type: z.literal("manual"),
-  input: z.record(z.enum(["uuid", "string", "number"]))
+  input: z.record(z.string(), z.enum(["uuid", "string", "number"]))
 });
 
 const ErasureActionSchema = z.enum(["delete", "anonymize"]);
 
 const ErasureCascadeRuleSchema = z.object({
   entity: z.string(),
-  match: z.record(z.string()),
+  match: z.record(z.string(), z.string()),
   action: ErasureActionSchema
 });
 
@@ -183,12 +183,14 @@ export const PolicySchema = z.object({
 
   // entities must reference valid sources
   for (const [entityName, entity] of Object.entries(policy.entities)) {
-    if (!policy.sources[entity.source]) {
-      ctx.addIssue({
-        path: ["entities", entityName, "source"],
-        message: `Unknown source '${entity.source}'`,
-        code: z.ZodIssueCode.custom
-      });
+    if (entity && typeof entity === 'object' && 'source' in entity && typeof entity.source === 'string') {
+      if (!policy.sources[entity.source]) {
+        ctx.addIssue({
+          path: ["entities", entityName, "source"],
+          message: `Unknown source '${entity.source}'`,
+          code: z.ZodIssueCode.custom
+        });
+      }
     }
   }
 
@@ -210,12 +212,14 @@ export const PolicySchema = z.object({
     const strategies = policy.masking.strategies;
     for (const [i, rule] of policy.masking.rules.entries()) {
       for (const field of Object.values(rule.fields)) {
-        if (!strategies[field.strategy]) {
-          ctx.addIssue({
-            path: ["masking", "rules", i],
-            message: `Unknown masking strategy '${field.strategy}'`,
-            code: z.ZodIssueCode.custom
-          });
+        if (field && typeof field === 'object' && 'strategy' in field && typeof field.strategy === 'string') {
+          if (!strategies[field.strategy]) {
+            ctx.addIssue({
+              path: ["masking", "rules", i],
+              message: `Unknown masking strategy '${field.strategy}'`,
+              code: z.ZodIssueCode.custom
+            });
+          }
         }
       }
     }

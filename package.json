@@ -2,9 +2,10 @@
   "name": "retentix",
   "version": "0.0.1",
   "description": "Automated GDPR Data Retention & Erasure for HR SaaS",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.ts",
   "scripts": {
+    "dev": "node --experimental-strip-types index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -12,7 +13,7 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@types/node": "^22.13.10"
+    "@types/node": "^24.0.0"
   },
   "homepage": "https://github.com/yaghouti/Retentix#readme",
   "bugs": {
@@ -24,8 +25,8 @@
   },
   "license": "ISC",
   "author": "Majid Yaghouti",
-  "packageManager": "pnpm@11.1.0",
+  "packageManager": "pnpm@10.26.2",
   "engines": {
-    "node": ">=22.13.10"
+    "node": ">=24.0.0"
   }
 }

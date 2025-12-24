@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { PolicySchema } from "./schema";
-import * as T from "./types";
+import { PolicySchema } from "./schema.ts";
+import * as T from "./types.ts";
 
 /* ==================================================
  * Public API
@@ -62,8 +62,6 @@ function toDataSource(
         kind: "postgres",
         connectionEnv: stripEnvRef(source.connection)
       };
-    default:
-      exhaustive(source);
   }
 }
 
@@ -87,7 +85,7 @@ function toEntity(
  * ================================================== */
 
 function toRetentionRule(
-  rule: z.infer<typeof PolicySchema>["retention"][number]
+  rule: NonNullable<z.infer<typeof PolicySchema>["retention"]>[number]
 ): T.RetentionRule {
   return {
     entity: rule.entity,
@@ -97,21 +95,21 @@ function toRetentionRule(
 }
 
 function toRetentionAction(
-  action: z.infer<typeof PolicySchema>["retention"][number]["action"]
+  action: NonNullable<z.infer<typeof PolicySchema>["retention"]>[number]["action"]
 ): T.RetentionAction {
-  switch (action.type) {
-    case "delete":
-      return { kind: "delete" };
-    case "none":
-      return { kind: "none" };
-    case "anonymize":
-      return {
-        kind: "anonymize",
-        fields: action.fields
-      };
-    default:
-      exhaustive(action);
+  if (action.type === "delete") {
+    return { kind: "delete" };
   }
+  if (action.type === "none") {
+    return { kind: "none" };
+  }
+  if (action.type === "anonymize") {
+    return {
+      kind: "anonymize",
+      fields: action.fields
+    };
+  }
+  exhaustive(action);
 }
 
 /* ==================================================
@@ -136,7 +134,7 @@ function toMaskingRule(
 ): T.MaskingRule {
   return {
     entity: rule.entity,
-    fields: mapRecord(rule.fields, f => ({
+    fields: mapRecord(rule.fields, (f) => ({
       strategy: f.strategy
     }))
   };
@@ -147,18 +145,17 @@ function toMaskingStrategy(
     z.infer<typeof PolicySchema>["masking"]
   >["strategies"][string]
 ): T.MaskingStrategy {
-  switch (strategy.type) {
-    case "hash":
-      return {
-        kind: "hash",
-        algorithm: strategy.algorithm,
-        saltEnv: stripEnvRef(strategy.salt)
-      };
-    case "null":
-      return { kind: "null" };
-    default:
-      exhaustive(strategy);
+  if (strategy.type === "hash") {
+    return {
+      kind: "hash",
+      algorithm: strategy.algorithm,
+      saltEnv: stripEnvRef(strategy.salt)
+    };
   }
+  if (strategy.type === "null") {
+    return { kind: "null" };
+  }
+  exhaustive(strategy);
 }
 
 /* ==================================================
@@ -173,7 +170,7 @@ function toErasure(
   return {
     trigger: {
       kind: "manual",
-      input: erasure.trigger.input
+      input: erasure.trigger.input as Record<string, T.ErasureInputType>
     },
     cascade: erasure.cascade.map(toErasureCascadeRule)
   };
@@ -186,7 +183,7 @@ function toErasureCascadeRule(
 ): T.ErasureCascadeRule {
   return {
     entity: rule.entity,
-    match: rule.match,
+    match: rule.match as Record<string, string>,
     action: rule.action
   };
 }
