@@ -1,11 +1,11 @@
-import fs from "node:fs";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { loadPolicy } from "./validate.ts";
+import fs from 'node:fs';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { loadPolicy } from './validate.ts';
 
 // Mock the fs module
-vi.mock("node:fs");
+vi.mock('node:fs');
 
-describe("loadPolicy", () => {
+describe('loadPolicy', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -14,7 +14,7 @@ describe("loadPolicy", () => {
     vi.restoreAllMocks();
   });
 
-  it("should load and parse a valid YAML policy", () => {
+  it('should load and parse a valid YAML policy', () => {
     const yamlContent = `
 version: 1
 policy:
@@ -36,22 +36,22 @@ entities:
 
     vi.mocked(fs.readFileSync).mockReturnValue(yamlContent);
 
-    const policy = loadPolicy("test-policy.yaml");
+    const policy = loadPolicy('test-policy.yaml');
 
-    expect(fs.readFileSync).toHaveBeenCalledWith("test-policy.yaml", "utf8");
+    expect(fs.readFileSync).toHaveBeenCalledWith('test-policy.yaml', 'utf8');
     expect(policy.version).toBe(1);
-    expect(policy.policy.name).toBe("Test Policy");
-    expect(policy.sources.test_db.type).toBe("postgres");
+    expect(policy.policy.name).toBe('Test Policy');
+    expect(policy.sources.test_db.type).toBe('postgres');
   });
 
-  it("should throw on invalid YAML", () => {
-    const invalidYaml = "invalid: yaml: content:";
+  it('should throw on invalid YAML', () => {
+    const invalidYaml = 'invalid: yaml: content:';
     vi.mocked(fs.readFileSync).mockReturnValue(invalidYaml);
 
-    expect(() => loadPolicy("invalid.yaml")).toThrow();
+    expect(() => loadPolicy('invalid.yaml')).toThrow();
   });
 
-  it("should throw on invalid policy schema", () => {
+  it('should throw on invalid policy schema', () => {
     const invalidPolicy = `
 version: 2
 policy:
@@ -59,18 +59,18 @@ policy:
 `;
     vi.mocked(fs.readFileSync).mockReturnValue(invalidPolicy);
 
-    expect(() => loadPolicy("invalid-policy.yaml")).toThrow();
+    expect(() => loadPolicy('invalid-policy.yaml')).toThrow();
   });
 
-  it("should handle file read errors", () => {
+  it('should handle file read errors', () => {
     vi.mocked(fs.readFileSync).mockImplementation(() => {
-      throw new Error("File not found");
+      throw new Error('File not found');
     });
 
-    expect(() => loadPolicy("nonexistent.yaml")).toThrow("File not found");
+    expect(() => loadPolicy('nonexistent.yaml')).toThrow('File not found');
   });
 
-  it("should parse complex policy with all features", () => {
+  it('should parse complex policy with all features', () => {
     const complexYaml = `
 version: 1
 policy:
@@ -131,7 +131,7 @@ audit:
 
     vi.mocked(fs.readFileSync).mockReturnValue(complexYaml);
 
-    const policy = loadPolicy("complex-policy.yaml");
+    const policy = loadPolicy('complex-policy.yaml');
 
     expect(policy.version).toBe(1);
     expect(policy.retention).toHaveLength(1);

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 /* --------------------------------------------------
  * Helpers
@@ -13,9 +13,9 @@ const DurationSchema = z
 
 const EnvRefSchema = z
   .string()
-  .regex(/^env:[A-Z0-9_]+$/, "Environment variable reference must be env:VAR_NAME");
+  .regex(/^env:[A-Z0-9_]+$/, 'Environment variable reference must be env:VAR_NAME');
 
-const CronSchema = z.string().min(1, "Cron expression required");
+const CronSchema = z.string().min(1, 'Cron expression required');
 
 /* --------------------------------------------------
  * Core Metadata
@@ -26,7 +26,7 @@ const PolicyMetadataSchema = z.object({
   owner: z.string().email(),
   description: z.string().optional(),
   effective_from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  timezone: z.string().default("UTC"),
+  timezone: z.string().default('UTC'),
 });
 
 /* --------------------------------------------------
@@ -34,7 +34,7 @@ const PolicyMetadataSchema = z.object({
  * -------------------------------------------------- */
 
 const PostgresSourceSchema = z.object({
-  type: z.literal("postgres"),
+  type: z.literal('postgres'),
   connection: EnvRefSchema,
 });
 
@@ -59,15 +59,15 @@ const EntitiesSchema = z.record(z.string(), EntitySchema);
  * Retention Rules
  * -------------------------------------------------- */
 
-const RetentionActionSchema = z.discriminatedUnion("type", [
+const RetentionActionSchema = z.discriminatedUnion('type', [
   z.object({
-    type: z.literal("delete"),
+    type: z.literal('delete'),
   }),
   z.object({
-    type: z.literal("none"),
+    type: z.literal('none'),
   }),
   z.object({
-    type: z.literal("anonymize"),
+    type: z.literal('anonymize'),
     fields: z.array(z.string()).min(1),
   }),
 ]);
@@ -85,16 +85,16 @@ const RetentionSchema = z.array(RetentionRuleSchema);
  * -------------------------------------------------- */
 
 const HashMaskSchema = z.object({
-  type: z.literal("hash"),
-  algorithm: z.enum(["sha256", "sha512"]),
+  type: z.literal('hash'),
+  algorithm: z.enum(['sha256', 'sha512']),
   salt: EnvRefSchema,
 });
 
 const NullMaskSchema = z.object({
-  type: z.literal("null"),
+  type: z.literal('null'),
 });
 
-const MaskingStrategySchema = z.discriminatedUnion("type", [HashMaskSchema, NullMaskSchema]);
+const MaskingStrategySchema = z.discriminatedUnion('type', [HashMaskSchema, NullMaskSchema]);
 
 const MaskingSchema = z.object({
   strategies: z.record(z.string(), MaskingStrategySchema),
@@ -116,11 +116,11 @@ const MaskingSchema = z.object({
  * -------------------------------------------------- */
 
 const ErasureTriggerSchema = z.object({
-  type: z.literal("manual"),
-  input: z.record(z.string(), z.enum(["uuid", "string", "number"])),
+  type: z.literal('manual'),
+  input: z.record(z.string(), z.enum(['uuid', 'string', 'number'])),
 });
 
-const ErasureActionSchema = z.enum(["delete", "anonymize"]);
+const ErasureActionSchema = z.enum(['delete', 'anonymize']);
 
 const ErasureCascadeRuleSchema = z.object({
   entity: z.string(),
@@ -138,7 +138,7 @@ const ErasureSchema = z.object({
  * -------------------------------------------------- */
 
 const ExecutionSchema = z.object({
-  mode: z.enum(["dry-run", "apply"]).default("dry-run"),
+  mode: z.enum(['dry-run', 'apply']).default('dry-run'),
   schedule: CronSchema.optional(),
   batch_size: z.number().int().positive().max(10000).default(1000),
   max_runtime_minutes: z.number().int().positive().max(180).default(30),
@@ -150,11 +150,11 @@ const ExecutionSchema = z.object({
 
 const AuditSchema = z.object({
   log: z.object({
-    destination: z.enum(["local", "stdout"]).default("local"),
-    format: z.enum(["json"]).default("json"),
+    destination: z.enum(['local', 'stdout']).default('local'),
+    format: z.enum(['json']).default('json'),
   }),
   report: z.object({
-    include: z.array(z.enum(["policy_metadata", "execution_summary", "affected_records"])),
+    include: z.array(z.enum(['policy_metadata', 'execution_summary', 'affected_records'])),
   }),
 });
 
@@ -183,13 +183,13 @@ export const PolicySchema = z
     for (const [entityName, entity] of Object.entries(policy.entities)) {
       if (
         entity &&
-        typeof entity === "object" &&
-        "source" in entity &&
-        typeof entity.source === "string"
+        typeof entity === 'object' &&
+        'source' in entity &&
+        typeof entity.source === 'string'
       ) {
         if (!policy.sources[entity.source]) {
           ctx.addIssue({
-            path: ["entities", entityName, "source"],
+            path: ['entities', entityName, 'source'],
             message: `Unknown source '${entity.source}'`,
             code: z.ZodIssueCode.custom,
           });
@@ -202,7 +202,7 @@ export const PolicySchema = z
       for (const [i, rule] of policy.retention.entries()) {
         if (!policy.entities[rule.entity]) {
           ctx.addIssue({
-            path: ["retention", i, "entity"],
+            path: ['retention', i, 'entity'],
             message: `Unknown entity '${rule.entity}'`,
             code: z.ZodIssueCode.custom,
           });
@@ -217,13 +217,13 @@ export const PolicySchema = z
         for (const field of Object.values(rule.fields)) {
           if (
             field &&
-            typeof field === "object" &&
-            "strategy" in field &&
-            typeof field.strategy === "string"
+            typeof field === 'object' &&
+            'strategy' in field &&
+            typeof field.strategy === 'string'
           ) {
             if (!strategies[field.strategy]) {
               ctx.addIssue({
-                path: ["masking", "rules", i],
+                path: ['masking', 'rules', i],
                 message: `Unknown masking strategy '${field.strategy}'`,
                 code: z.ZodIssueCode.custom,
               });

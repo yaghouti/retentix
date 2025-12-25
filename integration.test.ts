@@ -1,10 +1,10 @@
-import fs from "node:fs";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { parsePolicy } from "./policy/parser.ts";
-import { loadPolicy } from "./policy/validate.ts";
+import fs from 'node:fs';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { parsePolicy } from './policy/parser.ts';
+import { loadPolicy } from './policy/validate.ts';
 
-describe("Integration Tests", () => {
-  const testPolicyPath = "test-policy.yaml";
+describe('Integration Tests', () => {
+  const testPolicyPath = 'test-policy.yaml';
   const testPolicyContent = `
 version: 1
 policy:
@@ -86,7 +86,7 @@ audit:
 `;
 
   beforeEach(() => {
-    fs.writeFileSync(testPolicyPath, testPolicyContent, "utf8");
+    fs.writeFileSync(testPolicyPath, testPolicyContent, 'utf8');
   });
 
   afterEach(() => {
@@ -95,7 +95,7 @@ audit:
     }
   });
 
-  it("should load, validate, and parse a complete policy", () => {
+  it('should load, validate, and parse a complete policy', () => {
     // Load and validate
     const rawPolicy = loadPolicy(testPolicyPath);
     expect(rawPolicy.version).toBe(1);
@@ -104,65 +104,65 @@ audit:
     const policy = parsePolicy(rawPolicy);
 
     // Verify metadata
-    expect(policy.metadata.name).toBe("Integration Test Policy");
-    expect(policy.metadata.owner).toBe("test@example.com");
+    expect(policy.metadata.name).toBe('Integration Test Policy');
+    expect(policy.metadata.owner).toBe('test@example.com');
     expect(policy.metadata.effectiveFrom).toBeInstanceOf(Date);
-    expect(policy.metadata.timezone).toBe("UTC");
+    expect(policy.metadata.timezone).toBe('UTC');
 
     // Verify sources
     expect(policy.sources.test_db).toEqual({
-      kind: "postgres",
-      connectionEnv: "TEST_DATABASE_URL",
+      kind: 'postgres',
+      connectionEnv: 'TEST_DATABASE_URL',
     });
 
     // Verify entities
     expect(Object.keys(policy.entities)).toHaveLength(2);
-    expect(policy.entities.test_users.table).toBe("users");
-    expect(policy.entities.test_logs.table).toBe("logs");
+    expect(policy.entities.test_users.table).toBe('users');
+    expect(policy.entities.test_logs.table).toBe('logs');
 
     // Verify retention rules
     expect(policy.retention).toHaveLength(2);
     expect(policy.retention?.[0].retainFor).toEqual({
       amount: 7,
-      unit: "year",
+      unit: 'year',
     });
-    expect(policy.retention?.[0].action).toEqual({ kind: "delete" });
+    expect(policy.retention?.[0].action).toEqual({ kind: 'delete' });
     expect(policy.retention?.[1].retainFor).toEqual({
       amount: 90,
-      unit: "day",
+      unit: 'day',
     });
     expect(policy.retention?.[1].action).toEqual({
-      kind: "anonymize",
-      fields: ["user_id", "ip_address"],
+      kind: 'anonymize',
+      fields: ['user_id', 'ip_address'],
     });
 
     // Verify masking
     expect(policy.masking?.strategies.email_hash).toEqual({
-      kind: "hash",
-      algorithm: "sha256",
-      saltEnv: "HASH_SALT",
+      kind: 'hash',
+      algorithm: 'sha256',
+      saltEnv: 'HASH_SALT',
     });
     expect(policy.masking?.strategies.nullify).toEqual({
-      kind: "null",
+      kind: 'null',
     });
     expect(policy.masking?.rules).toHaveLength(1);
 
     // Verify erasure
-    expect(policy.erasure?.trigger.kind).toBe("manual");
-    expect(policy.erasure?.trigger.input).toEqual({ user_id: "uuid" });
+    expect(policy.erasure?.trigger.kind).toBe('manual');
+    expect(policy.erasure?.trigger.input).toEqual({ user_id: 'uuid' });
     expect(policy.erasure?.cascade).toHaveLength(2);
 
     // Verify execution
-    expect(policy.execution?.mode).toBe("dry-run");
+    expect(policy.execution?.mode).toBe('dry-run');
     expect(policy.execution?.batchSize).toBe(500);
     expect(policy.execution?.maxRuntimeMinutes).toBe(45);
 
     // Verify audit
-    expect(policy.audit?.log.destination).toBe("local");
+    expect(policy.audit?.log.destination).toBe('local');
     expect(policy.audit?.report.include).toHaveLength(3);
   });
 
-  it("should handle minimal policy", () => {
+  it('should handle minimal policy', () => {
     const minimalPolicy = `
 version: 1
 policy:
@@ -182,12 +182,12 @@ entities:
     created_at: created_at
 `;
 
-    fs.writeFileSync(testPolicyPath, minimalPolicy, "utf8");
+    fs.writeFileSync(testPolicyPath, minimalPolicy, 'utf8');
 
     const rawPolicy = loadPolicy(testPolicyPath);
     const policy = parsePolicy(rawPolicy);
 
-    expect(policy.metadata.name).toBe("Minimal Policy");
+    expect(policy.metadata.name).toBe('Minimal Policy');
     expect(policy.retention).toBeUndefined();
     expect(policy.masking).toBeUndefined();
     expect(policy.erasure).toBeUndefined();
@@ -195,7 +195,7 @@ entities:
     expect(policy.audit).toBeUndefined();
   });
 
-  it("should handle all duration formats", () => {
+  it('should handle all duration formats', () => {
     const policyWithDurations = `
 version: 1
 policy:
@@ -238,19 +238,19 @@ retention:
       type: delete
 `;
 
-    fs.writeFileSync(testPolicyPath, policyWithDurations, "utf8");
+    fs.writeFileSync(testPolicyPath, policyWithDurations, 'utf8');
 
     const rawPolicy = loadPolicy(testPolicyPath);
     const policy = parsePolicy(rawPolicy);
 
-    expect(policy.retention?.[0].retainFor).toEqual({ amount: 1, unit: "day" });
+    expect(policy.retention?.[0].retainFor).toEqual({ amount: 1, unit: 'day' });
     expect(policy.retention?.[1].retainFor).toEqual({
       amount: 12,
-      unit: "month",
+      unit: 'month',
     });
     expect(policy.retention?.[2].retainFor).toEqual({
       amount: 5,
-      unit: "year",
+      unit: 'year',
     });
   });
 });

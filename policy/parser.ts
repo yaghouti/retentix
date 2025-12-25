@@ -1,6 +1,6 @@
-import type { z } from "zod";
-import { PolicySchema } from "./schema.ts";
-import type * as T from "./types.ts";
+import type { z } from 'zod';
+import { PolicySchema } from './schema.ts';
+import type * as T from './types.ts';
 
 /* ==================================================
  * Public API
@@ -33,7 +33,7 @@ function toDomainPolicy(raw: z.infer<typeof PolicySchema>): T.Policy {
  * Metadata
  * ================================================== */
 
-function toMetadata(meta: z.infer<typeof PolicySchema>["policy"]): T.PolicyMetadata {
+function toMetadata(meta: z.infer<typeof PolicySchema>['policy']): T.PolicyMetadata {
   return {
     name: meta.name,
     owner: meta.owner,
@@ -47,11 +47,11 @@ function toMetadata(meta: z.infer<typeof PolicySchema>["policy"]): T.PolicyMetad
  * Data Sources
  * ================================================== */
 
-function toDataSource(source: z.infer<typeof PolicySchema>["sources"][string]): T.DataSource {
+function toDataSource(source: z.infer<typeof PolicySchema>['sources'][string]): T.DataSource {
   switch (source.type) {
-    case "postgres":
+    case 'postgres':
       return {
-        kind: "postgres",
+        kind: 'postgres',
         connectionEnv: stripEnvRef(source.connection),
       };
   }
@@ -61,7 +61,7 @@ function toDataSource(source: z.infer<typeof PolicySchema>["sources"][string]): 
  * Entities
  * ================================================== */
 
-function toEntity(entity: z.infer<typeof PolicySchema>["entities"][string]): T.Entity {
+function toEntity(entity: z.infer<typeof PolicySchema>['entities'][string]): T.Entity {
   return {
     source: entity.source,
     table: entity.table,
@@ -75,7 +75,7 @@ function toEntity(entity: z.infer<typeof PolicySchema>["entities"][string]): T.E
  * ================================================== */
 
 function toRetentionRule(
-  rule: NonNullable<z.infer<typeof PolicySchema>["retention"]>[number]
+  rule: NonNullable<z.infer<typeof PolicySchema>['retention']>[number]
 ): T.RetentionRule {
   return {
     entity: rule.entity,
@@ -85,17 +85,17 @@ function toRetentionRule(
 }
 
 function toRetentionAction(
-  action: NonNullable<z.infer<typeof PolicySchema>["retention"]>[number]["action"]
+  action: NonNullable<z.infer<typeof PolicySchema>['retention']>[number]['action']
 ): T.RetentionAction {
-  if (action.type === "delete") {
-    return { kind: "delete" };
+  if (action.type === 'delete') {
+    return { kind: 'delete' };
   }
-  if (action.type === "none") {
-    return { kind: "none" };
+  if (action.type === 'none') {
+    return { kind: 'none' };
   }
-  if (action.type === "anonymize") {
+  if (action.type === 'anonymize') {
     return {
-      kind: "anonymize",
+      kind: 'anonymize',
       fields: action.fields,
     };
   }
@@ -106,7 +106,7 @@ function toRetentionAction(
  * Masking
  * ================================================== */
 
-function toMasking(masking: NonNullable<z.infer<typeof PolicySchema>["masking"]>): T.MaskingPolicy {
+function toMasking(masking: NonNullable<z.infer<typeof PolicySchema>['masking']>): T.MaskingPolicy {
   return {
     strategies: mapRecord(masking.strategies, toMaskingStrategy),
     rules: masking.rules.map(toMaskingRule),
@@ -114,7 +114,7 @@ function toMasking(masking: NonNullable<z.infer<typeof PolicySchema>["masking"]>
 }
 
 function toMaskingRule(
-  rule: NonNullable<z.infer<typeof PolicySchema>["masking"]>["rules"][number]
+  rule: NonNullable<z.infer<typeof PolicySchema>['masking']>['rules'][number]
 ): T.MaskingRule {
   return {
     entity: rule.entity,
@@ -125,17 +125,17 @@ function toMaskingRule(
 }
 
 function toMaskingStrategy(
-  strategy: NonNullable<z.infer<typeof PolicySchema>["masking"]>["strategies"][string]
+  strategy: NonNullable<z.infer<typeof PolicySchema>['masking']>['strategies'][string]
 ): T.MaskingStrategy {
-  if (strategy.type === "hash") {
+  if (strategy.type === 'hash') {
     return {
-      kind: "hash",
+      kind: 'hash',
       algorithm: strategy.algorithm,
       saltEnv: stripEnvRef(strategy.salt),
     };
   }
-  if (strategy.type === "null") {
-    return { kind: "null" };
+  if (strategy.type === 'null') {
+    return { kind: 'null' };
   }
   exhaustive(strategy);
 }
@@ -144,10 +144,10 @@ function toMaskingStrategy(
  * Erasure (RTBF)
  * ================================================== */
 
-function toErasure(erasure: NonNullable<z.infer<typeof PolicySchema>["erasure"]>): T.ErasurePolicy {
+function toErasure(erasure: NonNullable<z.infer<typeof PolicySchema>['erasure']>): T.ErasurePolicy {
   return {
     trigger: {
-      kind: "manual",
+      kind: 'manual',
       input: erasure.trigger.input as Record<string, T.ErasureInputType>,
     },
     cascade: erasure.cascade.map(toErasureCascadeRule),
@@ -155,7 +155,7 @@ function toErasure(erasure: NonNullable<z.infer<typeof PolicySchema>["erasure"]>
 }
 
 function toErasureCascadeRule(
-  rule: NonNullable<z.infer<typeof PolicySchema>["erasure"]>["cascade"][number]
+  rule: NonNullable<z.infer<typeof PolicySchema>['erasure']>['cascade'][number]
 ): T.ErasureCascadeRule {
   return {
     entity: rule.entity,
@@ -169,7 +169,7 @@ function toErasureCascadeRule(
  * ================================================== */
 
 function toExecution(
-  exec: NonNullable<z.infer<typeof PolicySchema>["execution"]>
+  exec: NonNullable<z.infer<typeof PolicySchema>['execution']>
 ): T.ExecutionConfig {
   return {
     mode: exec.mode,
@@ -183,7 +183,7 @@ function toExecution(
  * Audit
  * ================================================== */
 
-function toAudit(audit: NonNullable<z.infer<typeof PolicySchema>["audit"]>): T.AuditConfig {
+function toAudit(audit: NonNullable<z.infer<typeof PolicySchema>['audit']>): T.AuditConfig {
   return {
     log: {
       destination: audit.log.destination,
@@ -208,14 +208,14 @@ function parseDuration(input: string): T.Duration {
   const amount = Number(match[1]);
   const unitRaw = match[2].toLowerCase();
 
-  const unit = unitRaw.startsWith("day") ? "day" : unitRaw.startsWith("month") ? "month" : "year";
+  const unit = unitRaw.startsWith('day') ? 'day' : unitRaw.startsWith('month') ? 'month' : 'year';
 
   return { amount, unit };
 }
 
 function stripEnvRef(ref: string): string {
   // env:PG_URL -> PG_URL
-  return ref.replace(/^env:/, "");
+  return ref.replace(/^env:/, '');
 }
 
 /* ==================================================

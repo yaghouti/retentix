@@ -35,7 +35,7 @@ export interface PolicyMetadata {
 export type DataSource = PostgresSource;
 
 export interface PostgresSource {
-  kind: "postgres";
+  kind: 'postgres';
   connectionEnv: string;
 }
 
@@ -63,15 +63,15 @@ export interface RetentionRule {
 }
 
 export interface DeleteAction {
-  kind: "delete";
+  kind: 'delete';
 }
 
 export interface NoneAction {
-  kind: "none";
+  kind: 'none';
 }
 
 export interface AnonymizeAction {
-  kind: "anonymize";
+  kind: 'anonymize';
   fields: string[];
 }
 
@@ -98,13 +98,13 @@ export interface FieldMask {
 export type MaskingStrategy = HashMask | NullMask;
 
 export interface HashMask {
-  kind: "hash";
-  algorithm: "sha256" | "sha512";
+  kind: 'hash';
+  algorithm: 'sha256' | 'sha512';
   saltEnv: string;
 }
 
 export interface NullMask {
-  kind: "null";
+  kind: 'null';
 }
 
 /* ==================================================
@@ -117,16 +117,16 @@ export interface ErasurePolicy {
 }
 
 export interface ErasureTrigger {
-  kind: "manual";
+  kind: 'manual';
   input: Record<string, ErasureInputType>;
 }
 
-export type ErasureInputType = "uuid" | "string" | "number";
+export type ErasureInputType = 'uuid' | 'string' | 'number';
 
 export interface ErasureCascadeRule {
   entity: string;
   match: Record<string, string>;
-  action: "delete" | "anonymize";
+  action: 'delete' | 'anonymize';
 }
 
 /* ==================================================
@@ -140,7 +140,7 @@ export interface ExecutionConfig {
   maxRuntimeMinutes: number;
 }
 
-export type ExecutionMode = "dry-run" | "apply";
+export type ExecutionMode = 'dry-run' | 'apply';
 
 /* ==================================================
  * Audit
@@ -152,15 +152,15 @@ export interface AuditConfig {
 }
 
 export interface AuditLogConfig {
-  destination: "local" | "stdout";
-  format: "json";
+  destination: 'local' | 'stdout';
+  format: 'json';
 }
 
 export interface AuditReportConfig {
   include: AuditReportSection[];
 }
 
-export type AuditReportSection = "policy_metadata" | "execution_summary" | "affected_records";
+export type AuditReportSection = 'policy_metadata' | 'execution_summary' | 'affected_records';
 
 /* ==================================================
  * Value Objects
@@ -168,5 +168,5 @@ export type AuditReportSection = "policy_metadata" | "execution_summary" | "affe
 
 export interface Duration {
   amount: number;
-  unit: "day" | "month" | "year";
+  unit: 'day' | 'month' | 'year';
 }
