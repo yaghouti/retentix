@@ -430,8 +430,32 @@ All type errors have been resolved for strict TypeScript checking. The project u
 
 The project includes GitHub Actions workflows for:
 
-- **CI**: Runs tests, linting, formatting, type checking, and security audit on every push/PR
+- **CI**: Runs tests, linting, formatting, type checking, Docker build validation, and security audit on every push/PR
+- **Docker**: Builds and publishes multi-platform Docker images on version tags and validates builds on PRs
 - **Release**: Automated releases on version tags
+
+### Docker Image Publishing
+
+Docker images are automatically built and published when you create a version tag:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+This triggers:
+- Multi-platform build (linux/amd64, linux/arm64)
+- Push to GitHub Container Registry
+- Semantic version tagging (v1.0.0, v1.0, v1, latest)
+- Build provenance attestation
+
+### Pull Request Validation
+
+Every PR automatically:
+- Validates Docker image builds successfully
+- Runs full test suite
+- Checks code quality and formatting
+- Performs security audit
 
 ---
 
