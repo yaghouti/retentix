@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  retentix:
+    image: ghcr.io/yaghouti/retentix:latest
+    container_name: retentix
+    environment:
+      DATABASE_URL: postgresql://change-me-username:change-me-password@postgres:5432/change-me-database-name
+      HASH_SALT: change-me-long-random-secret
+      AUDIT_PATH: /data/audit.jsonl
+      NODE_ENV: production
+    volumes:
+      - ./examples/hr-policy.yaml:/app/policy.yaml:ro
+      - ./audit:/data
+    depends_on:
+      - postgres
+    command: ["retention", "run", "/app/policy.yaml"]
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: retentix-postgres
+    environment:
+      POSTGRES_DB: change-me-database-name
+      POSTGRES_USER: change-me-username
+      POSTGRES_PASSWORD: change-me-password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
