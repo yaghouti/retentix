@@ -1,0 +1,93 @@
+version: 1
+
+policy:
+  name: "HR Data Retention Policy"
+  owner: "privacy@example.com"
+  description: "GDPR-compliant retention policy for HR data"
+  effective_from: "2024-01-01"
+  timezone: "UTC"
+
+sources:
+  hr_db:
+    type: postgres
+    connection: env:HR_DATABASE_URL
+
+entities:
+  employees:
+    source: hr_db
+    table: employees
+    primary_key: id
+    created_at: created_at
+  
+  applications:
+    source: hr_db
+    table: job_applications
+    primary_key: id
+    created_at: submitted_at
+
+retention:
+  - entity: employees
+    retain_for: "7 years"
+    action:
+      type: delete
+  
+  - entity: applications
+    retain_for: "18 months"
+    action:
+      type: anonymize
+      fields:
+        - email
+        - phone
+        - address
+
+masking:
+  strategies:
+    email_hash:
+      type: hash
+      algorithm: sha256
+      salt: env:HASH_SALT
+    
+    nullify:
+      type: "null"
+  
+  rules:
+    - entity: applications
+      fields:
+        email:
+          strategy: email_hash
+        phone:
+          strategy: nullify
+
+erasure:
+  trigger:
+    type: manual
+    input:
+      employee_id: uuid
+  
+  cascade:
+    - entity: employees
+      match:
+        id: $employee_id
+      action: delete
+    
+    - entity: applications
+      match:
+        employee_id: $employee_id
+      action: anonymize
+
+execution:
+  mode: dry-run
+  schedule: "0 2 * * 0"
+  batch_size: 1000
+  max_runtime_minutes: 30
+
+audit:
+  log:
+    destination: local
+    format: json
+  report:
+    include:
+      - policy_metadata
+      - execution_summary
+      - affected_records
+
