@@ -134,11 +134,6 @@ jobs:
 
       - name: Test Docker image
         run: |
-          # Create a dummy license token for testing (64-byte signature)
-          # Payload: {"customer":"CI","environments":["test"],"expires_at":"2099-12-31T23:59:59.000Z","features":["retention","erasure","masking"],"issued_at":"2025-01-01T00:00:00.000Z"}
-          # Signature: 64 bytes of zeros (invalid but correct size for testing --help)
-          DUMMY_LICENSE='eyJjdXN0b21lciI6IkNJIiwiZW52aXJvbm1lbnRzIjpbInRlc3QiXSwiZXhwaXJlc19hdCI6IjIwOTktMTItMzFUMjM6NTk6NTkuMDAwWiIsImZlYXR1cmVzIjpbInJldGVudGlvbiIsImVyYXN1cmUiLCJtYXNraW5nIl0sImlzc3VlZF9hdCI6IjIwMjUtMDEtMDFUMDA6MDA6MDAuMDAwWiJ9.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
-          docker run --rm \
-            -e RETENTIX_LICENSE="$DUMMY_LICENSE" \
-            retentix:test --help
+          # --help doesn't require a license
+          docker run --rm retentix:test --help
 

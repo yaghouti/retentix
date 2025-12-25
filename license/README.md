@@ -43,10 +43,11 @@ eyJjdXN0b21lciI6IkNvbXBhbnkgTmFtZSIsLi4ufQ==.c2lnbmF0dXJlX2hlcmU=
 
 ## Usage
 
-Set the license as an environment variable:
+Set the license and public key as environment variables:
 
 ```bash
 export RETENTIX_LICENSE='eyJjdXN0b21lciI6IllvdXJDb21wYW55IiwiZW52aXJvbm1lbnRzIjpbInByb2R1Y3Rpb24iXSwiZXhwaXJlc19hdCI6IjIwMjUtMTItMzFUMjM6NTk6NTkuMDAwWiIsImZlYXR1cmVzIjpbInJldGVudGlvbiIsImVyYXN1cmUiLCJtYXNraW5nIl0sImlzc3VlZF9hdCI6IjIwMjUtMDEtMDFUMDA6MDA6MDAuMDAwWiJ9.c2lnbmF0dXJlX2hlcmU='
+export RETENTIX_PUBLIC_KEY='base64_encoded_32byte_public_key_here'
 ```
 
 Or in Docker/Kubernetes:
@@ -54,7 +55,10 @@ Or in Docker/Kubernetes:
 ```yaml
 environment:
   - RETENTIX_LICENSE=eyJjdXN0b21lciI6IkNvbXBhbnkifQ==.c2lnbmF0dXJl
+  - RETENTIX_PUBLIC_KEY=your_base64_public_key_here
 ```
+
+**Note:** If `RETENTIX_PUBLIC_KEY` is not set, a dummy key (32 bytes of zeros) is used for development/testing. **Always set this in production!**
 
 ## Verification
 
@@ -92,9 +96,15 @@ The license is verified using the TweetNaCl library:
 
 ## Development
 
-For development and testing, you'll need a valid license token. Contact the maintainer to obtain one.
+For development and testing:
+- The system uses a dummy public key (32 bytes of zeros) if `RETENTIX_PUBLIC_KEY` is not set
+- You'll need a valid license token signed with the corresponding private key
+- Contact the maintainer to obtain production keys and licenses
 
-The public key placeholder (`BASE64_PUBLIC_KEY_HERE`) in `verify.ts` must be replaced with the actual public key before deployment.
+For production deployment:
+- **Always set `RETENTIX_PUBLIC_KEY`** to your actual Ed25519 public key (base64 encoded, 32 bytes)
+- Store it securely in your secret management system (AWS Secrets Manager, HashiCorp Vault, etc.)
+- Never commit the actual public key to version control if it's sensitive
 
 ### Generating a License (for maintainers)
 

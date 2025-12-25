@@ -296,6 +296,7 @@ pnpm install
 
 ```bash
 RETENTIX_LICENSE='base64payload.base64signature'       # Required (compact token format)
+RETENTIX_PUBLIC_KEY='base64_encoded_32byte_public_key' # Optional (for production, defaults to dummy key)
 DATABASE_URL=postgresql://user:pass@localhost:5432/db  # Required
 AUDIT_PATH=audit.jsonl                                  # Optional (default: audit.jsonl)
 HASH_SALT=your-secret-salt                             # Required for hash masking

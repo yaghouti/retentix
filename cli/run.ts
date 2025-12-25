@@ -57,9 +57,10 @@ Examples:
   retentix erasure run policy.yaml --input-user_id=UUID
 
 Environment Variables:
-  RETENTIX_LICENSE License token (required, format: base64payload.base64signature)
-  DATABASE_URL     PostgreSQL connection string (required)
-  AUDIT_PATH       Path to audit log file (default: audit.jsonl)
-  HASH_SALT        Salt for hash masking (required for hash strategy)
+  RETENTIX_LICENSE    License token (required, format: base64payload.base64signature)
+  RETENTIX_PUBLIC_KEY Ed25519 public key for license verification (base64, 32 bytes)
+  DATABASE_URL        PostgreSQL connection string (required)
+  AUDIT_PATH          Path to audit log file (default: audit.jsonl)
+  HASH_SALT           Salt for hash masking (required for hash strategy)
 `);
 }

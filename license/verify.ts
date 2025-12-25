@@ -1,7 +1,15 @@
 import nacl from 'tweetnacl';
 import type { LicensePayload } from './types.ts';
 
-const PUBLIC_KEY = Buffer.from('BASE64_PUBLIC_KEY_HERE', 'base64');
+// Load public key from environment variable
+// For development/testing, defaults to 32 bytes of zeros if not set
+const PUBLIC_KEY_B64 =
+  process.env.RETENTIX_PUBLIC_KEY || 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=';
+const PUBLIC_KEY = Buffer.from(PUBLIC_KEY_B64, 'base64');
+
+if (PUBLIC_KEY.length !== 32) {
+  throw new Error(`Invalid public key size: expected 32 bytes, got ${PUBLIC_KEY.length} bytes`);
+}
 
 /**
  * Load and verify license from a compact token format: base64(payload).base64(signature)
