@@ -13,10 +13,21 @@ export interface AuditWriter {
   record(event: AuditEvent): Promise<void>;
 }
 
-export interface AuditEvent {
+export type AuditEvent = RetentionAuditEvent | ErasureAuditEvent;
+
+export interface RetentionAuditEvent {
   type: 'retention';
   entity: string;
   action: 'delete' | 'anonymize' | 'none';
+  affectedRows: number;
+  dryRun: boolean;
+  timestamp: string;
+}
+
+export interface ErasureAuditEvent {
+  type: 'erasure';
+  entity: string;
+  action: 'delete' | 'anonymize';
   affectedRows: number;
   dryRun: boolean;
   timestamp: string;
