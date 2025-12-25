@@ -10,9 +10,11 @@ export async function erasureCmd(sub: string, args: string[]) {
   const input: Record<string, unknown> = {};
   for (const f of flags) {
     if (!f.startsWith('--input-')) continue;
-    const parts = f.slice(8).split('=');
-    if (parts.length !== 2) continue;
-    const [k, v] = parts;
+    const keyValue = f.slice(8);
+    const equalIndex = keyValue.indexOf('=');
+    if (equalIndex === -1) continue;
+    const k = keyValue.slice(0, equalIndex);
+    const v = keyValue.slice(equalIndex + 1);
     input[k] = v;
   }
 

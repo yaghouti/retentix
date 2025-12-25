@@ -9,7 +9,7 @@ export async function retentionCmd(sub: string, args: string[]) {
 
   const ctx = await buildContext(policyFile, args);
 
-  if (!ctx.policy.retention) {
+  if (!ctx.policy.retention || ctx.policy.retention.length === 0) {
     console.log('No retention rules defined');
     return;
   }
