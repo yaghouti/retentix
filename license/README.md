@@ -43,11 +43,10 @@ eyJjdXN0b21lciI6IkNvbXBhbnkgTmFtZSIsLi4ufQ==.c2lnbmF0dXJlX2hlcmU=
 
 ## Usage
 
-Set the license and public key as environment variables:
+Set the license as an environment variable:
 
 ```bash
 export RETENTIX_LICENSE='eyJjdXN0b21lciI6IllvdXJDb21wYW55IiwiZW52aXJvbm1lbnRzIjpbInByb2R1Y3Rpb24iXSwiZXhwaXJlc19hdCI6IjIwMjUtMTItMzFUMjM6NTk6NTkuMDAwWiIsImZlYXR1cmVzIjpbInJldGVudGlvbiIsImVyYXN1cmUiLCJtYXNraW5nIl0sImlzc3VlZF9hdCI6IjIwMjUtMDEtMDFUMDA6MDA6MDAuMDAwWiJ9.c2lnbmF0dXJlX2hlcmU='
-export RETENTIX_PUBLIC_KEY='base64_encoded_32byte_public_key_here'
 ```
 
 Or in Docker/Kubernetes:
@@ -55,10 +54,9 @@ Or in Docker/Kubernetes:
 ```yaml
 environment:
   - RETENTIX_LICENSE=eyJjdXN0b21lciI6IkNvbXBhbnkifQ==.c2lnbmF0dXJl
-  - RETENTIX_PUBLIC_KEY=your_base64_public_key_here
 ```
 
-**Note:** If `RETENTIX_PUBLIC_KEY` is not set, a dummy key (32 bytes of zeros) is used for development/testing. **Always set this in production!**
+**Note:** The public key for license verification is hardcoded in the application. A dummy key (32 bytes of zeros) is used for development/testing.
 
 ## Verification
 
@@ -97,14 +95,14 @@ The license is verified using the TweetNaCl library:
 ## Development
 
 For development and testing:
-- The system uses a dummy public key (32 bytes of zeros) if `RETENTIX_PUBLIC_KEY` is not set
+- The system uses a hardcoded dummy public key (32 bytes of zeros)
 - You'll need a valid license token signed with the corresponding private key
-- Contact the maintainer to obtain production keys and licenses
+- Contact the maintainer to obtain production licenses
 
 For production deployment:
-- **Always set `RETENTIX_PUBLIC_KEY`** to your actual Ed25519 public key (base64 encoded, 32 bytes)
-- Store it securely in your secret management system (AWS Secrets Manager, HashiCorp Vault, etc.)
-- Never commit the actual public key to version control if it's sensitive
+- The production public key is hardcoded in the Docker image
+- Only licenses signed with the corresponding private key (kept secure by the maintainer) are accepted
+- Contact the maintainer for license information
 
 ### Generating a License (for maintainers)
 

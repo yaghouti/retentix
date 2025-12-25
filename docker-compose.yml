@@ -6,7 +6,6 @@ services:
     container_name: retentix
     environment:
       RETENTIX_LICENSE: eyJjdXN0b21lciI6IllvdXJDb21wYW55IiwiZW52aXJvbm1lbnRzIjpbInByb2R1Y3Rpb24iXSwiZXhwaXJlc19hdCI6IjIwMjUtMTItMzFUMjM6NTk6NTkuMDAwWiIsImZlYXR1cmVzIjpbInJldGVudGlvbiIsImVyYXN1cmUiLCJtYXNraW5nIl0sImlzc3VlZF9hdCI6IjIwMjUtMDEtMDFUMDA6MDA6MDAuMDAwWiJ9.Y2hhbmdlLW1lLXNpZ25hdHVyZQ==
-      RETENTIX_PUBLIC_KEY: Y2hhbmdlLW1lLXB1YmxpYy1rZXktMzItYnl0ZXM=
       DATABASE_URL: postgresql://change-me-username:change-me-password@postgres:5432/change-me-database-name
       HASH_SALT: change-me-long-random-secret
       AUDIT_PATH: /data/audit.jsonl
