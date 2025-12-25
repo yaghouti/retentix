@@ -14,6 +14,7 @@ RUN pnpm install --frozen-lockfile --prod
 # Copy source code
 COPY policy ./policy
 COPY engine ./engine
+COPY license ./license
 COPY cli ./cli
 
 # Set environment

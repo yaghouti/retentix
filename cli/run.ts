@@ -1,20 +1,36 @@
+import type { LicensePayload } from '../license/types.ts';
 import { erasureCmd } from './commands/erasure.ts';
 import { maskingCmd } from './commands/masking.ts';
 import { retentionCmd } from './commands/retention.ts';
 import { validateCmd } from './commands/validate.ts';
 
-export async function run(args: string[]) {
+export async function run(args: string[], license: LicensePayload) {
   const [cmd, ...rest] = args;
 
   if (cmd === 'validate') return validateCmd(rest);
   if (cmd === '--help' || cmd === '-h' || !cmd) return showHelp();
 
   const [sub, ...subRest] = rest;
-  if (cmd === 'retention') return retentionCmd(sub, subRest);
-  if (cmd === 'erasure') return erasureCmd(sub, subRest);
-  if (cmd === 'masking') return maskingCmd(sub, subRest);
+  if (cmd === 'retention') {
+    enforceFeature(license, 'retention');
+    return retentionCmd(sub, subRest);
+  }
+  if (cmd === 'erasure') {
+    enforceFeature(license, 'erasure');
+    return erasureCmd(sub, subRest);
+  }
+  if (cmd === 'masking') {
+    enforceFeature(license, 'masking');
+    return maskingCmd(sub, subRest);
+  }
 
   throw new Error('Unknown command');
+}
+
+function enforceFeature(license: LicensePayload, feature: 'retention' | 'erasure' | 'masking') {
+  if (!license.features.includes(feature)) {
+    throw new Error(`Feature '${feature}' is not enabled in your license`);
+  }
 }
 
 function showHelp() {
@@ -41,6 +57,7 @@ Examples:
   retentix erasure run policy.yaml --input-user_id=UUID
 
 Environment Variables:
+  RETENTIX_LICENSE License token (required, format: base64payload.base64signature)
   DATABASE_URL     PostgreSQL connection string (required)
   AUDIT_PATH       Path to audit log file (default: audit.jsonl)
   HASH_SALT        Salt for hash masking (required for hash strategy)
