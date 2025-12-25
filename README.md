@@ -179,6 +179,7 @@ Run with Docker:
 
 ```bash
 docker run --rm \
+  -e RETENTIX_LICENSE='your-license-token-here' \
   -e DATABASE_URL="postgresql://user:pass@host:5432/db" \
   -e HASH_SALT="your-secret-salt" \
   -v $(pwd)/policy.yaml:/app/policy.yaml:ro \

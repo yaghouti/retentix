@@ -134,5 +134,7 @@ jobs:
 
       - name: Test Docker image
         run: |
-          docker run --rm retentix:test --help
+          docker run --rm \
+            -e RETENTIX_LICENSE='eyJ0ZXN0IjoidHJ1ZSJ9.dGVzdHNpZ25hdHVyZQ==' \
+            retentix:test --help
 
