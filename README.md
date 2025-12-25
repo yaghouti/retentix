@@ -22,10 +22,40 @@ pnpm install
 
 This project uses Node.js 24's native TypeScript support via the `--experimental-strip-types` flag. No build step required!
 
-### Run the example:
+### Quick Start
 
 ```bash
-node --experimental-strip-types example.ts path/to/policy.yaml
+# Run the example
+node --experimental-strip-types examples/example.ts
+
+# Or specify a custom policy file
+node --experimental-strip-types examples/example.ts path/to/policy.yaml
+```
+
+### CLI Commands
+
+```bash
+# Validate a policy file
+node --experimental-strip-types cli/index.ts validate examples/hr-policy.yaml
+
+# Run retention rules
+node --experimental-strip-types cli/index.ts retention run examples/hr-policy.yaml
+
+# Run masking rules
+node --experimental-strip-types cli/index.ts masking run examples/hr-policy.yaml
+
+# Run erasure (RTBF) with input parameters
+node --experimental-strip-types cli/index.ts erasure run examples/hr-policy.yaml --input-employee_id=123e4567-e89b-12d3-a456-426614174000
+
+# Add --no-dry-run flag to execute changes (default is dry-run)
+node --experimental-strip-types cli/index.ts retention run examples/hr-policy.yaml --no-dry-run
+```
+
+### Environment Variables
+
+```bash
+DATABASE_URL=postgresql://user:pass@localhost:5432/db  # Required
+AUDIT_PATH=audit.jsonl                                  # Optional (default: audit.jsonl)
 ```
 
 ### Development:
@@ -87,23 +117,40 @@ pnpm check:fix
 ## Project Structure
 
 ```
-policy/
-  ├── types.ts           # Domain type definitions
-  ├── schema.ts          # Zod validation schemas
-  ├── schema.test.ts     # Schema validation tests
-  ├── parser.ts          # Parse validated data to domain types
-  ├── parser.test.ts     # Parser tests
-  ├── validate.ts        # Load and validate YAML policies
-  └── validate.test.ts   # Validation tests
+cli/                     # Command-line interface
+  ├── index.ts          # CLI entry point
+  ├── run.ts            # Command router
+  ├── config.ts         # Context builder
+  └── commands/
+      ├── validate.ts   # Validate policy files
+      ├── retention.ts  # Run retention rules
+      ├── masking.ts    # Run masking rules
+      └── erasure.ts    # Run erasure (RTBF)
 
-engine/
-  ├── index.ts           # Main engine entry point
-  ├── retention.ts       # Retention rule execution
-  ├── context.ts         # Execution context types
-  ├── audit.ts           # Audit logging
-  └── postgres/
-      ├── client.ts      # PostgreSQL client setup
-      └── retention.ts   # PostgreSQL retention implementation
+policy/                  # Policy validation & parsing
+  ├── types.ts          # Domain type definitions
+  ├── schema.ts         # Zod validation schemas
+  ├── parser.ts         # Parse validated data to domain types
+  ├── validate.ts       # Load and validate YAML policies
+  └── *.test.ts         # Comprehensive test suite
+
+engine/                  # Execution engine
+  ├── index.ts          # Main engine entry point
+  ├── retention.ts      # Retention rule execution
+  ├── erasure.ts        # Erasure (RTBF) execution
+  ├── masking.ts        # Masking rule execution
+  ├── context.ts        # Execution context types
+  ├── audit.ts          # Audit logging
+  └── postgres/         # PostgreSQL implementations
+      ├── client.ts     # Connection pool setup
+      ├── retention.ts  # Retention queries
+      ├── erasure.ts    # Erasure queries
+      └── masking.ts    # Masking queries
+
+examples/                # Example policies & usage
+  ├── hr-policy.yaml    # Complete GDPR HR policy example
+  ├── example.ts        # Policy loading demonstration
+  └── README.md         # Examples documentation
 ```
 
 ## Type Safety

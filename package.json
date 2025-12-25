@@ -4,6 +4,9 @@
   "description": "Automated GDPR Data Retention & Erasure for HR SaaS",
   "type": "module",
   "main": "index.ts",
+  "bin": {
+    "retentix": "./cli/index.ts"
+  },
   "scripts": {
     "dev": "node --experimental-strip-types index.ts",
     "test": "vitest run",
