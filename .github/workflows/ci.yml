@@ -134,5 +134,6 @@ jobs:
 
       - name: Test Docker image
         run: |
+          # --help doesn't require a license
           docker run --rm retentix:test --help
 

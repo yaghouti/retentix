@@ -85,6 +85,24 @@ Field-level anonymization (hashing or nulling sensitive fields).
 
 ## Quick Start
 
+### License Requirement
+
+Retentix requires a valid license to run. Set the `RETENTIX_LICENSE` environment variable with your license token:
+
+```bash
+export RETENTIX_LICENSE='eyJjdXN0b21lciI6IllvdXJDb21wYW55IiwiZW52aXJvbm1lbnRzIjpbInByb2R1Y3Rpb24iXSwiZXhwaXJlc19hdCI6IjIwMjUtMTItMzFUMjM6NTk6NTkuMDAwWiIsImZlYXR1cmVzIjpbInJldGVudGlvbiIsImVyYXN1cmUiLCJtYXNraW5nIl0sImlzc3VlZF9hdCI6IjIwMjUtMDEtMDFUMDA6MDA6MDAuMDAwWiJ9.c2lnbmF0dXJlX2hlcmU='
+```
+
+The license is a compact cryptographically signed token (format: `base64(payload).base64(signature)`) that specifies:
+- Customer name and environments
+- Enabled features (retention, erasure, masking)
+- Expiration date
+- Optional rate limits
+
+Contact the maintainer for license information.
+
+### Running Examples
+
 ```bash
 # Run the example
 node --experimental-strip-types examples/example.ts
@@ -161,6 +179,7 @@ Run with Docker:
 
 ```bash
 docker run --rm \
+  -e RETENTIX_LICENSE='your-license-token-here' \
   -e DATABASE_URL="postgresql://user:pass@host:5432/db" \
   -e HASH_SALT="your-secret-salt" \
   -v $(pwd)/policy.yaml:/app/policy.yaml:ro \
@@ -276,6 +295,8 @@ pnpm install
 ## Environment Variables
 
 ```bash
+RETENTIX_LICENSE='base64payload.base64signature'       # Required (compact token format)
+RETENTIX_PUBLIC_KEY='base64_encoded_32byte_public_key' # Optional (for production, defaults to dummy key)
 DATABASE_URL=postgresql://user:pass@localhost:5432/db  # Required
 AUDIT_PATH=audit.jsonl                                  # Optional (default: audit.jsonl)
 HASH_SALT=your-secret-salt                             # Required for hash masking
