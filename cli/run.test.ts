@@ -63,8 +63,13 @@ describe('run', () => {
     await expect(run(['unknown', 'arg'])).rejects.toThrow('Unknown command');
   });
 
-  it('should throw error for empty args', async () => {
-    await expect(run([])).rejects.toThrow('Unknown command');
+  it('should show help for empty args', async () => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    await run([]);
+
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Retentix'));
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Usage:'));
   });
 
   it('should pass all remaining args to command', async () => {
