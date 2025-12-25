@@ -1,15 +1,108 @@
 import nacl from 'tweetnacl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { loadAndVerifyLicense } from './verify.ts';
+import { loadAndVerifyLicense, loadPublicKey } from './verify.ts';
 
 vi.mock('tweetnacl');
 
-describe('Public Key Validation', () => {
-  it('should verify default key is exactly 32 bytes', () => {
-    // This verifies the hardcoded default key in verify.ts is correct
-    const defaultKey = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=';
-    const decoded = Buffer.from(defaultKey, 'base64');
-    expect(decoded.length).toBe(32);
+describe('loadPublicKey', () => {
+  const originalEnv = process.env.RETENTIX_PUBLIC_KEY;
+
+  afterEach(() => {
+    // Restore original env
+    if (originalEnv !== undefined) {
+      process.env.RETENTIX_PUBLIC_KEY = originalEnv;
+    } else {
+      delete process.env.RETENTIX_PUBLIC_KEY;
+    }
+  });
+
+  it('should load valid 32-byte public key', () => {
+    const validKey = Buffer.alloc(32, 0xff).toString('base64');
+    process.env.RETENTIX_PUBLIC_KEY = validKey;
+
+    const result = loadPublicKey();
+
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBe(32);
+  });
+
+  it('should use default key when env var not set', () => {
+    delete process.env.RETENTIX_PUBLIC_KEY;
+
+    const result = loadPublicKey();
+
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBe(32);
+  });
+
+  it('should throw error for public key shorter than 32 bytes', () => {
+    const shortKey = Buffer.alloc(16, 0).toString('base64');
+    process.env.RETENTIX_PUBLIC_KEY = shortKey;
+
+    expect(() => loadPublicKey()).toThrow(
+      'Invalid public key size: expected 32 bytes, got 16 bytes'
+    );
+  });
+
+  it('should throw error for public key longer than 32 bytes', () => {
+    const longKey = Buffer.alloc(64, 0).toString('base64');
+    process.env.RETENTIX_PUBLIC_KEY = longKey;
+
+    expect(() => loadPublicKey()).toThrow(
+      'Invalid public key size: expected 32 bytes, got 64 bytes'
+    );
+  });
+
+  it('should throw error for 1-byte public key', () => {
+    const tinyKey = Buffer.alloc(1, 0).toString('base64');
+    process.env.RETENTIX_PUBLIC_KEY = tinyKey;
+
+    expect(() => loadPublicKey()).toThrow(
+      'Invalid public key size: expected 32 bytes, got 1 bytes'
+    );
+  });
+
+  it('should use default key when env var is empty string', () => {
+    // Empty string is falsy, so it uses the default
+    process.env.RETENTIX_PUBLIC_KEY = '';
+
+    const result = loadPublicKey();
+
+    expect(result).toBeInstanceOf(Buffer);
+    expect(result.length).toBe(32);
+  });
+
+  it('should throw error for 31-byte public key (off by one)', () => {
+    const almostKey = Buffer.alloc(31, 0).toString('base64');
+    process.env.RETENTIX_PUBLIC_KEY = almostKey;
+
+    expect(() => loadPublicKey()).toThrow(
+      'Invalid public key size: expected 32 bytes, got 31 bytes'
+    );
+  });
+
+  it('should throw error for 33-byte public key (off by one)', () => {
+    const tooMuchKey = Buffer.alloc(33, 0).toString('base64');
+    process.env.RETENTIX_PUBLIC_KEY = tooMuchKey;
+
+    expect(() => loadPublicKey()).toThrow(
+      'Invalid public key size: expected 32 bytes, got 33 bytes'
+    );
+  });
+
+  it('should handle different 32-byte key values', () => {
+    const testKeys = [
+      Buffer.alloc(32, 0), // All zeros
+      Buffer.alloc(32, 0xff), // All ones
+      Buffer.from('a'.repeat(32)), // ASCII characters
+    ];
+
+    for (const key of testKeys) {
+      process.env.RETENTIX_PUBLIC_KEY = key.toString('base64');
+      const result = loadPublicKey();
+      expect(result.length).toBe(32);
+      expect(result.equals(key)).toBe(true);
+    }
   });
 });
 
