@@ -1,7 +1,7 @@
 {
   "name": "retentix",
   "version": "0.0.1",
-  "description": "Automated GDPR Data Retention & Erasure for HR SaaS",
+  "description": "Deterministic Data Retention & GDPR Execution Engine",
   "type": "module",
   "main": "index.ts",
   "bin": {

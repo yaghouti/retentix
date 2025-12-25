@@ -7,99 +7,52 @@
 
 **Deterministic Data Retention & GDPR Execution Engine**
 
-Retentix is a headless, production-grade execution engine for enforcing:
-
-* Data Retention policies
-* Right To Be Forgotten (RTBF / Erasure)
-* Field-level Masking (Anonymization)
-
-on live production databases (PostgreSQL).
-
-No UI. No ORM. No workflow engine.
+> 📖 **Looking for product information?** See [Product Documentation](docs/PRODUCT.md) for features, use cases, and deployment options.
 
 ---
 
-## Why Retentix
+## Overview
 
-Most compliance tools are:
+Retentix is a headless, production-grade execution engine for enforcing data retention policies, RTBF (Right To Be Forgotten), and field-level masking on live PostgreSQL databases.
 
-* Over-engineered
-* Hard to audit
-* Operationally expensive
-* UI-heavy and non-deterministic
-
-Retentix is designed for **engineering-led compliance**:
-
-* Deterministic execution
-* Fail-fast validation
-* Audit-first by design
-* Minimal operational surface
-
-If a policy runs, it is correct. If not, it fails early.
+**Key Features:**
+- ✅ Deterministic execution with fail-fast validation
+- ✅ Audit-first design (every action is logged)
+- ✅ Stateless & headless (perfect for CI/CD, cron, K8s)
+- ✅ No UI, no ORM, no workflow engine
 
 ---
 
-## Design Principles
+## Requirements
 
-* **Deterministic Execution**
-  Every run either completes successfully or fails before any side-effect.
-
-* **Fail-Fast Validation**
-  Policies and inputs are fully validated before any database interaction.
-
-* **Audit-First**
-  Every action records affected rows, timestamps, and execution mode.
-
-* **Stateless & Headless**
-  Designed for CI/CD, cron jobs, and Kubernetes jobs.
+- Node.js >= 24.0.0 (uses native TypeScript support)
+- pnpm >= 10.26.2
+- PostgreSQL database
 
 ---
 
-## What Retentix Is NOT
+## Installation
 
-* ❌ Data discovery tool
-* ❌ DLP platform
-* ❌ UI-based compliance suite
-* ❌ Continuous monitoring system
-
-Retentix assumes you already know **what** data you own.
-It focuses on **executing compliance correctly**.
+```bash
+pnpm install
+```
 
 ---
 
-## Supported Operations
+## Environment Variables
 
-### Retention
+```bash
+RETENTIX_LICENSE='base64payload.base64signature'       # Required (compact token format)
+DATABASE_URL=postgresql://user:pass@localhost:5432/db  # Required
+AUDIT_PATH=audit.jsonl                                  # Optional (default: audit.jsonl)
+HASH_SALT=your-secret-salt                             # Required for hash masking
+```
 
-Delete expired data based on time-based policies.
-
-### RTBF (Erasure)
-
-Deterministic cascade deletion based on explicit identifiers (e.g. user_id).
-
-### Masking
-
-Field-level anonymization (hashing or nulling sensitive fields).
+**Note:** The public key for license verification is hardcoded in the application. The private key is kept secure and used to sign licenses.
 
 ---
 
 ## Quick Start
-
-### License Requirement
-
-Retentix requires a valid license to run. Set the `RETENTIX_LICENSE` environment variable with your license token:
-
-```bash
-export RETENTIX_LICENSE='eyJjdXN0b21lciI6IllvdXJDb21wYW55IiwiZW52aXJvbm1lbnRzIjpbInByb2R1Y3Rpb24iXSwiZXhwaXJlc19hdCI6IjIwMjUtMTItMzFUMjM6NTk6NTkuMDAwWiIsImZlYXR1cmVzIjpbInJldGVudGlvbiIsImVyYXN1cmUiLCJtYXNraW5nIl0sImlzc3VlZF9hdCI6IjIwMjUtMDEtMDFUMDA6MDA6MDAuMDAwWiJ9.c2lnbmF0dXJlX2hlcmU='
-```
-
-The license is a compact cryptographically signed token (format: `base64(payload).base64(signature)`) that specifies:
-- Customer name and environments
-- Enabled features (retention, erasure, masking)
-- Expiration date
-- Optional rate limits
-
-Contact the maintainer for license information.
 
 ### Running Examples
 
@@ -111,229 +64,36 @@ node --experimental-strip-types examples/example.ts
 node --experimental-strip-types examples/example.ts path/to/policy.yaml
 ```
 
-### Example Workflow
-
-```bash
-# 1. Validate Policy
-retentix validate policy.yaml
-
-# 2. Dry-run Retention (default)
-retentix retention run policy.yaml
-
-# 3. Execute RTBF
-retentix erasure run policy.yaml --input employee_id={UUID}
-
-# 4. Apply Masking
-retentix masking run policy.yaml
-
-# 5. Execute changes (remove dry-run)
-retentix retention run policy.yaml --no-dry-run
-```
-
----
-
-## Audit Output
-
-Each execution produces structured audit records:
-
-```json
-{
-  "type": "erasure",
-  "entity": "employee",
-  "action": "delete",
-  "affectedRows": 1,
-  "dryRun": false,
-  "timestamp": "2025-01-24T12:00:00Z"
-}
-```
-
-Audit logs can be:
-
-* Written to file
-* Shipped to SIEM
-* Provided directly to a DPO
-
----
-
-## Security Model
-
-* No dynamic SQL
-* No joins
-* No runtime expressions
-* Explicit table and column mapping
-* Secrets provided via environment variables
-
----
-
-## Deployment Models
-
-### Docker (Recommended)
-
-Pull the latest image from GitHub Container Registry:
-
-```bash
-docker pull ghcr.io/yaghouti/retentix:latest
-```
-
-Run with Docker:
-
-```bash
-docker run --rm \
-  -e RETENTIX_LICENSE='your-license-token-here' \
-  -e DATABASE_URL="postgresql://user:pass@host:5432/db" \
-  -e HASH_SALT="your-secret-salt" \
-  -v $(pwd)/policy.yaml:/app/policy.yaml:ro \
-  -v $(pwd)/audit:/app/audit \
-  ghcr.io/yaghouti/retentix:latest \
-  validate /app/policy.yaml
-```
-
-Run retention with docker-compose:
-
-```bash
-docker-compose run --rm retentix retention run /app/policy.yaml
-```
-
-### Kubernetes Job
-
-```yaml
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: retentix-retention
-spec:
-  schedule: "0 2 * * 0"  # Weekly at 2 AM
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-          - name: retentix
-            image: ghcr.io/yaghouti/retentix:latest
-            args: ["retention", "run", "/config/policy.yaml", "--no-dry-run"]
-            env:
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: retentix-secrets
-                  key: database-url
-            volumeMounts:
-            - name: config
-              mountPath: /config
-              readOnly: true
-          volumes:
-          - name: config
-            configMap:
-              name: retentix-policy
-          restartPolicy: OnFailure
-```
-
-### Other Deployment Options
-
-* CI/CD pipelines (GitHub Actions, GitLab CI)
-* Cron jobs (traditional Unix cron)
-* Air-gapped environments (offline Docker images)
-
----
-
-## Typical Use Cases
-
-* EU-based SaaS companies
-* FinTech and HealthTech
-* Organizations with internal DPOs
-* Engineering-driven compliance teams
-
----
-
-## Licensing
-
-PolicyCTL is licensed as:
-
-* Annual subscription
-* Per environment (dev / staging / prod)
-* No vendor lock-in
-
----
-
-## Support Philosophy
-
-PolicyCTL is intentionally minimal.
-
-If ongoing support is required, it usually indicates:
-
-* Incorrect policy design
-* Unclear data ownership
-
-The tool itself is designed to be operationally silent.
-
----
-
-## Summary
-
-PolicyCTL enables **compliance as code**:
-
-* Predictable
-* Auditable
-* Automatable
-
-Built for teams that value correctness over dashboards.
-
-# For Developers
-
-## Requirements
-
-- Node.js >= 24.0.0 (uses native TypeScript support)
-- pnpm >= 10.26.2
-- PostgreSQL database
-
-## Installation
-
-```bash
-pnpm install
-```
-
-## Environment Variables
-
-```bash
-RETENTIX_LICENSE='base64payload.base64signature'       # Required (compact token format)
-RETENTIX_PUBLIC_KEY='base64_encoded_32byte_public_key' # Optional (for production, defaults to dummy key)
-DATABASE_URL=postgresql://user:pass@localhost:5432/db  # Required
-AUDIT_PATH=audit.jsonl                                  # Optional (default: audit.jsonl)
-HASH_SALT=your-secret-salt                             # Required for hash masking
-```
-
----
-
-## CLI Commands
+### CLI Commands
 
 This project uses Node.js 24's native TypeScript support via the `--experimental-strip-types` flag. No build step required!
 
-### Validate a policy file
+#### Validate a policy file
 
 ```bash
 node --experimental-strip-types cli/index.ts validate examples/hr-policy.yaml
 ```
 
-### Run retention rules
+#### Run retention rules
 
 ```bash
 node --experimental-strip-types cli/index.ts retention run examples/hr-policy.yaml
 ```
 
-### Run masking rules
+#### Run masking rules
 
 ```bash
 node --experimental-strip-types cli/index.ts masking run examples/hr-policy.yaml
 ```
 
-### Run erasure (RTBF) with input parameters
+#### Run erasure (RTBF) with input parameters
 
 ```bash
 node --experimental-strip-types cli/index.ts erasure run examples/hr-policy.yaml \
   --input-employee_id=123e4567-e89b-12d3-a456-426614174000
 ```
 
-### Execute changes (disable dry-run)
+#### Execute changes (disable dry-run)
 
 ```bash
 node --experimental-strip-types cli/index.ts retention run examples/hr-policy.yaml --no-dry-run
@@ -358,7 +118,7 @@ pnpm test:coverage
 ```
 
 **Test Coverage:**
-- 174 tests across all modules
+- 203 tests across all modules
 - 98%+ code coverage
 - Unit, integration, and CLI tests
 
@@ -430,10 +190,18 @@ engine/                  # Execution engine
       ├── erasure.ts    # Erasure queries
       └── masking.ts    # Masking queries
 
+license/                 # License enforcement
+  ├── types.ts          # License payload types
+  ├── verify.ts         # License verification logic
+  └── README.md         # License documentation
+
 examples/                # Example policies & usage
   ├── hr-policy.yaml    # Complete GDPR HR policy example
   ├── example.ts        # Policy loading demonstration
   └── README.md         # Examples documentation
+
+docs/                    # Documentation
+  └── PRODUCT.md        # Product & customer documentation
 ```
 
 ---
@@ -477,12 +245,46 @@ Every PR automatically:
 - Runs full test suite
 - Checks code quality and formatting
 - Performs security audit
+- Reports code coverage to Codecov
+
+---
+
+## Docker Development
+
+### Build locally
+
+```bash
+docker build -t retentix:dev .
+```
+
+### Run with docker-compose
+
+```bash
+docker-compose up -d postgres
+docker-compose run --rm retentix validate /app/examples/hr-policy.yaml
+```
 
 ---
 
 ## Contributing
 
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests and checks (`pnpm test && pnpm check && pnpm type-check`)
+5. Commit your changes using [Conventional Commits](https://www.conventionalcommits.org/)
+6. Push to your branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
+
 See [examples/README.md](examples/README.md) for policy examples and usage patterns.
+
+---
+
+## Documentation
+
+- **[Product Documentation](docs/PRODUCT.md)** - Features, use cases, deployment models, and licensing
+- **[Examples](examples/README.md)** - Policy examples and usage patterns
+- **[License Documentation](license/README.md)** - License enforcement and verification
 
 ---
 

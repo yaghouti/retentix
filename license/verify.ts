@@ -2,23 +2,13 @@ import nacl from 'tweetnacl';
 import type { LicensePayload } from './types.ts';
 
 /**
- * Load and validate the public key from environment variable.
- * For development/testing, defaults to 32 bytes of zeros if not set.
- * @internal Exported for testing purposes
+ * Ed25519 public key for license verification.
+ * This is hardcoded in the application and used to verify license signatures.
+ * The corresponding private key is kept secure and used to sign licenses.
+ *
+ * For development/testing: 32 bytes of zeros (replace with actual public key in production)
  */
-export function loadPublicKey(): Buffer {
-  const publicKeyB64 =
-    process.env.RETENTIX_PUBLIC_KEY || 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=';
-  const publicKey = Buffer.from(publicKeyB64, 'base64');
-
-  if (publicKey.length !== 32) {
-    throw new Error(`Invalid public key size: expected 32 bytes, got ${publicKey.length} bytes`);
-  }
-
-  return publicKey;
-}
-
-const PUBLIC_KEY = loadPublicKey();
+const PUBLIC_KEY = Buffer.from('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', 'base64');
 
 /**
  * Load and verify license from a compact token format: base64(payload).base64(signature)
