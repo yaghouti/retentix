@@ -241,7 +241,7 @@ spec:
 
 Retentix is licensed as:
 
-* Annual/Monthly subscription
+* Annual subscription
 * Per environment (dev / staging / prod)
 * No vendor lock-in
 

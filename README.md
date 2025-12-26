@@ -7,7 +7,7 @@
 
 **Deterministic Data Retention & GDPR Execution Engine**
 
-> 📖 **Looking for product information?** See [Product Documentation](docs/PRODUCT.md) for features, use cases, and deployment options.
+> 📖 **Looking for product information?** See [Product Documentation](docs/product/Retentix.md) for features, use cases, and deployment options.
 
 ---
 
@@ -209,7 +209,7 @@ examples/                # Example policies & usage
   └── README.md         # Examples documentation
 
 docs/                    # Documentation
-  └── PRODUCT.md        # Product & customer documentation
+  └── Retentix.md        # Product & customer documentation
 ```
 
 ---
@@ -290,7 +290,7 @@ See [examples/README.md](examples/README.md) for policy examples and usage patte
 
 ## Documentation
 
-- **[Product Documentation](docs/PRODUCT.md)** - Features, use cases, deployment models, and licensing
+- **[Product Documentation](docs/product/Retentix.md)** - Features, use cases, deployment models, and licensing
 - **[Examples](examples/README.md)** - Policy examples and usage patterns
 - **[License Documentation](license/README.md)** - License enforcement and verification
 - **[Vendor Tools](vendor/README.md)** - License generation (internal use only)

@@ -1,5 +1,5 @@
 {
-  "name": "retentix",
+  "name": "retentix-engine",
   "version": "0.0.1",
   "description": "Deterministic Data Retention & GDPR Execution Engine",
   "type": "module",
