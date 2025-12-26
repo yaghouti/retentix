@@ -5,7 +5,8 @@
   "type": "module",
   "main": "index.ts",
   "bin": {
-    "retentix": "./cli/index.ts"
+    "retentix": "./cli/index.ts",
+    "retentix-vendor": "./vendor/cli.ts"
   },
   "scripts": {
     "dev": "node --experimental-strip-types index.ts",

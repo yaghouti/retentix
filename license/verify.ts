@@ -8,7 +8,7 @@ import type { LicensePayload } from './types.ts';
  *
  * For development/testing: 32 bytes of zeros (replace with actual public key in production)
  */
-const PUBLIC_KEY = Buffer.from('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', 'base64');
+const PUBLIC_KEY = Buffer.from('Gt7I2PeDTfbLiBIF6nndejF8cCMixzIJZXIy1Ccpqx4=', 'base64');
 
 /**
  * Load and verify license from a compact token format: base64(payload).base64(signature)
