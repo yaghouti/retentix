@@ -28,6 +28,7 @@ Retentix is a headless, production-grade execution engine for enforcing data ret
 - Node.js >= 24.0.0 (uses native TypeScript support)
 - pnpm >= 10.26.2
 - PostgreSQL database
+  - **pgcrypto extension** (required for hash masking strategy)
 
 ---
 

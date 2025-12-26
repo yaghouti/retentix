@@ -19,7 +19,7 @@ pnpm install
 | `RETENTIX_LICENSE` | Yes | - | License token (format: `base64(payload).base64(signature)`) |
 | `DATABASE_URL` | Yes | - | PostgreSQL connection string |
 | `AUDIT_PATH` | No | `audit.jsonl` | Path to audit log file |
-| `HASH_SALT` | Conditional | - | Salt for hash masking (required for `hash` strategy) |
+| `HASH_SALT` | Conditional | - | Salt for hash masking (required for `hash` strategy). **Note:** Hash masking requires PostgreSQL's `pgcrypto` extension. |
 
 ## Commands
 
@@ -285,6 +285,16 @@ Error: Feature 'erasure' is not enabled in your license
 Error: Failed to connect to database
 ```
 **Solution:** Verify `DATABASE_URL` is correct and database is accessible.
+
+```
+Error: function digest(text, unknown) does not exist
+```
+**Solution:** Enable the pgcrypto extension in your PostgreSQL database:
+```sql
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+```
+
+This extension is required for hash masking strategies.
 
 ### Policy Errors
 

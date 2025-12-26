@@ -2,6 +2,29 @@
 
 Retentix is designed for self-hosted deployment in your infrastructure. No SaaS dependency required.
 
+## Prerequisites
+
+### Database Requirements
+
+**PostgreSQL Database:**
+- PostgreSQL 12 or higher
+- **pgcrypto extension** (required for hash masking strategy)
+
+**Enable pgcrypto:**
+```sql
+-- Run this on your PostgreSQL database
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+```
+
+**Verify extension:**
+```sql
+SELECT * FROM pg_extension WHERE extname = 'pgcrypto';
+```
+
+**Note:** The pgcrypto extension is included by default in most PostgreSQL installations but must be explicitly enabled per database.
+
+---
+
 ## Deployment Options
 
 ### 1. Docker (Recommended)
@@ -46,9 +69,16 @@ services:
       POSTGRES_PASSWORD: pass
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
 
 volumes:
   pgdata:
+```
+
+**init-db.sql:**
+```sql
+-- Enable pgcrypto extension for hash masking
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 ```
 
 ---
