@@ -377,5 +377,32 @@ describe('TamperEvidentAuditWriter', () => {
 
       warnSpy.mockRestore();
     });
+
+    it('should handle file read errors gracefully', () => {
+      // Create a file that exists but will cause a read error
+      // We'll use a directory path instead of a file path
+      // This will cause readFileSync to throw EISDIR error
+      const dirPath = 'test-audit-dir';
+
+      // Create a directory (not a file)
+      if (!existsSync(dirPath)) {
+        const fs = require('node:fs');
+        fs.mkdirSync(dirPath);
+      }
+
+      try {
+        const result = TamperEvidentAuditWriter.verifyLog(dirPath);
+
+        expect(result.valid).toBe(false);
+        expect(result.errors).toHaveLength(1);
+        expect(result.errors[0]).toContain('Failed to read audit log');
+      } finally {
+        // Clean up
+        if (existsSync(dirPath)) {
+          const fs = require('node:fs');
+          fs.rmdirSync(dirPath);
+        }
+      }
+    });
   });
 });
