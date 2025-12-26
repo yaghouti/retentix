@@ -5,11 +5,13 @@ import { erasureCmd } from './commands/erasure.ts';
 import { maskingCmd } from './commands/masking.ts';
 import { retentionCmd } from './commands/retention.ts';
 import { validateCmd } from './commands/validate.ts';
+import { verifyAuditCmd } from './commands/verify-audit.ts';
 
 export async function run(args: string[], license: LicensePayload, limitResult?: RunLimitResult) {
   const [cmd, ...rest] = args;
 
   if (cmd === 'validate') return validateCmd(rest);
+  if (cmd === 'verify-audit') return verifyAuditCmd(rest);
   if (cmd === '--help' || cmd === '-h' || !cmd) return showHelp();
 
   // Log run limit to audit if exceeded
@@ -57,6 +59,7 @@ Usage:
 
 Commands:
   validate <policy.yaml>                 Validate policy file
+  verify-audit <audit-log-file>          Verify audit log integrity (tamper detection)
   retention run <policy.yaml>            Run retention rules
   masking run <policy.yaml>              Run masking rules
   erasure run <policy.yaml> [--input-*]  Run erasure (RTBF)
@@ -67,6 +70,7 @@ Options:
 
 Examples:
   retentix validate policy.yaml
+  retentix verify-audit audit.jsonl
   retentix retention run policy.yaml
   retentix retention run policy.yaml --no-dry-run
   retentix erasure run policy.yaml --input-user_id=UUID

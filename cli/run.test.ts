@@ -20,10 +20,15 @@ vi.mock('./commands/masking.ts', () => ({
   maskingCmd: vi.fn(),
 }));
 
+vi.mock('./commands/verify-audit.ts', () => ({
+  verifyAuditCmd: vi.fn(),
+}));
+
 import { erasureCmd } from './commands/erasure.ts';
 import { maskingCmd } from './commands/masking.ts';
 import { retentionCmd } from './commands/retention.ts';
 import { validateCmd } from './commands/validate.ts';
+import { verifyAuditCmd } from './commands/verify-audit.ts';
 
 describe('run', () => {
   const mockLicense: LicensePayload = {
@@ -74,10 +79,36 @@ describe('run', () => {
     await expect(run(['unknown', 'arg'], mockLicense)).rejects.toThrow('Unknown command');
   });
 
+  it('should route to verify-audit command', async () => {
+    vi.mocked(verifyAuditCmd).mockResolvedValue(undefined);
+
+    await run(['verify-audit', 'audit.jsonl'], mockLicense);
+
+    expect(verifyAuditCmd).toHaveBeenCalledWith(['audit.jsonl']);
+  });
+
   it('should show help for empty args', async () => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
 
     await run([], mockLicense);
+
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Retentix'));
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Usage:'));
+  });
+
+  it('should show help for --help flag', async () => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    await run(['--help'], mockLicense);
+
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Retentix'));
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Usage:'));
+  });
+
+  it('should show help for -h flag', async () => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    await run(['-h'], mockLicense);
 
     expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Retentix'));
     expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Usage:'));
@@ -186,6 +217,22 @@ describe('run', () => {
       expect(existsSync(testAuditFile)).toBe(false);
     });
 
+    it('should not log to audit when exceeded is true but limit is null', async () => {
+      vi.mocked(retentionCmd).mockResolvedValue(undefined);
+
+      const limitResult: RunLimitResult = {
+        allowed: true,
+        currentCount: 100,
+        limit: null,
+        exceeded: true,
+        message: 'No limit set',
+      };
+
+      await run(['retention', 'run', 'policy.yaml'], mockLicense, limitResult);
+
+      expect(existsSync(testAuditFile)).toBe(false);
+    });
+
     it('should not log to audit for validate command even if limit exceeded', async () => {
       vi.mocked(validateCmd).mockResolvedValue(undefined);
 
@@ -201,6 +248,40 @@ describe('run', () => {
 
       // Validate command returns early, so no audit logging
       expect(existsSync(testAuditFile)).toBe(false);
+    });
+
+    it('should not log to audit when limitResult is undefined', async () => {
+      vi.mocked(retentionCmd).mockResolvedValue(undefined);
+
+      // No limitResult parameter passed
+      await run(['retention', 'run', 'policy.yaml'], mockLicense);
+
+      expect(existsSync(testAuditFile)).toBe(false);
+    });
+
+    it('should use default audit path when AUDIT_PATH is not set', async () => {
+      vi.mocked(retentionCmd).mockResolvedValue(undefined);
+
+      // Remove AUDIT_PATH env var
+      delete process.env.AUDIT_PATH;
+
+      const limitResult: RunLimitResult = {
+        allowed: true,
+        currentCount: 5,
+        limit: 3,
+        exceeded: true,
+        message: 'Limit exceeded',
+      };
+
+      await run(['retention', 'run', 'policy.yaml'], mockLicense, limitResult);
+
+      // Should use default 'audit.jsonl'
+      expect(existsSync('audit.jsonl')).toBe(true);
+
+      // Clean up
+      if (existsSync('audit.jsonl')) {
+        rmSync('audit.jsonl');
+      }
     });
   });
 });

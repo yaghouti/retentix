@@ -184,6 +184,7 @@ engine/                  # Execution engine
   ├── masking.ts        # Masking rule execution
   ├── context.ts        # Execution context types
   ├── audit.ts          # Audit logging
+  ├── tamper-evident-audit.ts  # Tamper-evident audit with hash chain
   └── postgres/         # PostgreSQL implementations
       ├── client.ts     # Connection pool setup
       ├── retention.ts  # Retention queries
