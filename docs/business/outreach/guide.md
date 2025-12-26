@@ -1,7 +1,15 @@
-# Why this email works (important)
+# Outreach Guide
+
+> **Supporting Materials:**  
+> - [Competitive Landscape](../competitive-landscape.md) - For handling objections about OneTrust/BigID  
+> - [Economic Justification](../../product/economic-justification.md) - For "why do we need this?" questions
+
+---
+
+## Why emails work (important)
 
 - ❌ No buzzwords
-- ❌ No “AI / platform / revolution”
+- ❌ No "AI / platform / revolution"
 - ✅ Clear technical positioning
 - ✅ Respects EU compliance culture
 - ✅ Appeals to both CTO and DPO

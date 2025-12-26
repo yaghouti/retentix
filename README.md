@@ -3,11 +3,11 @@
 [![CI](https://github.com/yaghouti/Retentix/actions/workflows/ci.yml/badge.svg)](https://github.com/yaghouti/Retentix/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/yaghouti/Retentix/branch/main/graph/badge.svg)](https://codecov.io/gh/yaghouti/Retentix)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D24.0.0-brightgreen)](https://nodejs.org/)
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)](docs/business/license-agreement.md)
 
 **Deterministic Data Retention & GDPR Execution Engine**
 
-> 📖 **Documentation:** [Complete Documentation Index](docs/README.md) | [Product Overview](docs/product/overview.md) | [CLI Reference](docs/technical/cli-reference.md) | [Deployment Guide](docs/technical/deployment.md)
+> 📖 **Documentation:** [Complete Documentation Index](docs/README.md) | [Product Overview](docs/product/overview.md) | [Economic Justification](docs/product/economic-justification.md) | [CLI Reference](docs/technical/cli-reference.md) | [Deployment Guide](docs/technical/deployment.md)
 
 ---
 
@@ -217,12 +217,16 @@ docs/                    # Documentation (organized by audience)
   │   ├── policy-dsl.md        # Policy language
   │   └── security.md          # Security model
   ├── product/          # For customers & prospects
-  │   └── overview.md          # Product overview
+  │   ├── overview.md          # Product overview
+  │   └── economic-justification.md  # Why companies need it
   └── business/         # For sales & marketing
       ├── pitch.md             # 1-page pitch
       ├── pitch.pdf            # PDF version
       ├── positioning.md       # Market positioning
+      ├── competitive-landscape.md  # Competitive analysis
       ├── pilot-program.md     # Pilot structure
+      ├── license-agreement.md # Commercial license terms
+      ├── order-form.md        # Subscription order form
       ├── roadmap.md           # Product roadmap
       └── outreach/            # Sales materials
           ├── guide.md         # Outreach best practices
@@ -329,12 +333,16 @@ See [examples/README.md](examples/README.md) for policy examples and usage patte
 
 **For Product Evaluation:**
 - [Product Overview](docs/product/overview.md) - What Retentix is and does
+- [Economic Justification](docs/product/economic-justification.md) - Why companies need Retentix
 - [1-Page Pitch](docs/business/pitch.pdf) - Executive summary (PDF)
 - [Pilot Program](docs/business/pilot-program.md) - How to get started
+- [Commercial License Agreement](docs/business/license-agreement.md) - Legal terms
+- [Order Form](docs/business/order-form.md) - Subscription order form
 - [Security & Procurement FAQ](docs/business/security-procurement-faq.md) - Enterprise evaluation
 
 **For Sales & Marketing:**
 - [Market Positioning](docs/business/positioning.md) - Competitive differentiation
+- [Competitive Landscape](docs/business/competitive-landscape.md) - vs OneTrust, BigID, custom scripts
 - [Outreach Guide](docs/business/outreach/guide.md) - Best practices and ICP
 - [Email Templates](docs/business/outreach/templates.md) - Ready-to-use emails
 
@@ -346,4 +354,10 @@ See [examples/README.md](examples/README.md) for policy examples and usage patte
 
 ## License
 
-ISC
+**Proprietary Commercial Software**
+
+This software is proprietary and requires a valid commercial license for use.
+
+See [Commercial License Agreement](docs/business/license-agreement.md) for full terms and conditions.
+
+For licensing inquiries, contact: [majid.yaghouti@gmail.com](mailto:majid.yaghouti@gmail.com)

@@ -2,6 +2,7 @@
   "name": "retentix",
   "version": "0.0.1",
   "description": "Deterministic Data Retention & GDPR Execution Engine",
+  "private": true,
   "type": "module",
   "main": "index.ts",
   "bin": {
@@ -45,7 +46,7 @@
     "type": "git",
     "url": "git+https://github.com/yaghouti/Retentix.git"
   },
-  "license": "ISC",
+  "license": "UNLICENSED",
   "author": "Majid Yaghouti",
   "packageManager": "pnpm@10.26.2",
   "engines": {

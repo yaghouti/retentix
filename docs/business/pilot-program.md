@@ -5,6 +5,8 @@
 **Duration:** 30 calendar days  
 **Scope:** One controlled production-like environment
 
+> **Background:** See [Economic Justification](../product/economic-justification.md) for why companies need Retentix and ROI analysis.
+
 ---
 
 ## Purpose of the Pilot
