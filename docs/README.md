@@ -78,6 +78,9 @@ For sales, marketing, and business development:
 - **[Pilot Program](./business/pilot-program.md)**  
   30-day pilot structure and pricing
 
+- **[Security & Procurement FAQ](./business/security-procurement-faq.md)**  
+  Enterprise evaluation questions (Security, Legal, DPO, Procurement)
+
 - **[Product Roadmap](./business/roadmap.md)**  
   Planned features and strategic direction
 

@@ -330,6 +330,7 @@ See [examples/README.md](examples/README.md) for policy examples and usage patte
 - [Product Overview](docs/product/overview.md) - What Retentix is and does
 - [1-Page Pitch](docs/business/pitch.pdf) - Executive summary (PDF)
 - [Pilot Program](docs/business/pilot-program.md) - How to get started
+- [Security & Procurement FAQ](docs/business/security-procurement-faq.md) - Enterprise evaluation
 
 **For Sales & Marketing:**
 - [Market Positioning](docs/business/positioning.md) - Competitive differentiation
