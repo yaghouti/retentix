@@ -63,6 +63,9 @@ For customers, prospects, and product evaluation:
 - **[Product Overview](./product/overview.md)**  
   What Retentix is, what it does, and what it doesn't do
 
+- **[Economic Justification](./product/economic-justification.md)**  
+  Why companies need Retentix and ROI analysis
+
 ---
 
 ### Business Documentation
@@ -75,8 +78,17 @@ For sales, marketing, and business development:
 - **[Market Positioning](./business/positioning.md)**  
   How Retentix differs from competitors
 
+- **[Competitive Landscape](./business/competitive-landscape.md)**  
+  Detailed comparison with OneTrust, BigID, and custom scripts
+
 - **[Pilot Program](./business/pilot-program.md)**  
   30-day pilot structure and pricing
+
+- **[Commercial License Agreement](./business/license-agreement.md)**  
+  Legal terms and conditions for commercial use
+
+- **[Order Form](./business/order-form.md)**  
+  Subscription schedule and order form template
 
 - **[Security & Procurement FAQ](./business/security-procurement-faq.md)**  
   Enterprise evaluation questions (Security, Legal, DPO, Procurement)
