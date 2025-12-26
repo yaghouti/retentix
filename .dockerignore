@@ -4,6 +4,7 @@ node_modules
 *.test.ts
 *.test.js
 examples
+vendor
 .vscode
 .cursor
 *.md
@@ -18,3 +19,5 @@ coverage
 .vitest
 terminals
 tmp.md
+keys.json
+*.key

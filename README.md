@@ -195,6 +195,12 @@ license/                 # License enforcement
   ├── verify.ts         # License verification logic
   └── README.md         # License documentation
 
+vendor/                  # License generation (vendor-only, not for customers)
+  ├── generate.ts       # License signing & key generation
+  ├── cli.ts            # CLI for generating licenses
+  ├── README.md         # Vendor documentation
+  └── *.test.ts         # Vendor tool tests
+
 examples/                # Example policies & usage
   ├── hr-policy.yaml    # Complete GDPR HR policy example
   ├── example.ts        # Policy loading demonstration
@@ -285,6 +291,7 @@ See [examples/README.md](examples/README.md) for policy examples and usage patte
 - **[Product Documentation](docs/PRODUCT.md)** - Features, use cases, deployment models, and licensing
 - **[Examples](examples/README.md)** - Policy examples and usage patterns
 - **[License Documentation](license/README.md)** - License enforcement and verification
+- **[Vendor Tools](vendor/README.md)** - License generation (internal use only)
 
 ---
 

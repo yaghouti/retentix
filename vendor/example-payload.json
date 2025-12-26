@@ -1,0 +1,8 @@
+{
+  "customer": "Acme Corporation",
+  "environments": ["production", "staging"],
+  "expires_at": "2026-12-31T23:59:59.000Z",
+  "features": ["retention", "erasure", "masking"],
+  "max_runs_per_day": 1000,
+  "issued_at": "2025-01-01T00:00:00.000Z"
+}
