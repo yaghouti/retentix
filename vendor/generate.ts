@@ -10,23 +10,23 @@ import type { LicensePayload } from '../license/types.ts';
  * @returns The compact license token: base64(payload).base64(signature)
  */
 export function generateLicense(payload: LicensePayload, privateKey: Buffer): string {
-	if (privateKey.length !== 64) {
-		throw new Error(`Invalid private key size: expected 64 bytes, got ${privateKey.length} bytes`);
-	}
+  if (privateKey.length !== 64) {
+    throw new Error(`Invalid private key size: expected 64 bytes, got ${privateKey.length} bytes`);
+  }
 
-	// Serialize payload to JSON
-	const payloadJson = JSON.stringify(payload);
-	const payloadBuffer = Buffer.from(payloadJson);
+  // Serialize payload to JSON
+  const payloadJson = JSON.stringify(payload);
+  const payloadBuffer = Buffer.from(payloadJson);
 
-	// Sign the payload
-	const signature = nacl.sign.detached(payloadBuffer, privateKey);
+  // Sign the payload
+  const signature = nacl.sign.detached(payloadBuffer, privateKey);
 
-	// Encode to base64
-	const payloadB64 = payloadBuffer.toString('base64');
-	const signatureB64 = Buffer.from(signature).toString('base64');
+  // Encode to base64
+  const payloadB64 = payloadBuffer.toString('base64');
+  const signatureB64 = Buffer.from(signature).toString('base64');
 
-	// Return compact token format
-	return `${payloadB64}.${signatureB64}`;
+  // Return compact token format
+  return `${payloadB64}.${signatureB64}`;
 }
 
 /**
@@ -36,12 +36,12 @@ export function generateLicense(payload: LicensePayload, privateKey: Buffer): st
  * @returns Object containing publicKey (32 bytes) and privateKey (64 bytes)
  */
 export function generateKeyPair(): { publicKey: Buffer; privateKey: Buffer } {
-	const keyPair = nacl.sign.keyPair();
+  const keyPair = nacl.sign.keyPair();
 
-	return {
-		publicKey: Buffer.from(keyPair.publicKey),
-		privateKey: Buffer.from(keyPair.secretKey),
-	};
+  return {
+    publicKey: Buffer.from(keyPair.publicKey),
+    privateKey: Buffer.from(keyPair.secretKey),
+  };
 }
 
 /**
@@ -52,46 +52,45 @@ export function generateKeyPair(): { publicKey: Buffer; privateKey: Buffer } {
  * @throws Error if validation fails
  */
 export function validatePayload(payload: LicensePayload): void {
-	if (!payload.customer || typeof payload.customer !== 'string') {
-		throw new Error('Invalid customer: must be a non-empty string');
-	}
+  if (!payload.customer || typeof payload.customer !== 'string') {
+    throw new Error('Invalid customer: must be a non-empty string');
+  }
 
-	if (!Array.isArray(payload.environments) || payload.environments.length === 0) {
-		throw new Error('Invalid environments: must be a non-empty array');
-	}
+  if (!Array.isArray(payload.environments) || payload.environments.length === 0) {
+    throw new Error('Invalid environments: must be a non-empty array');
+  }
 
-	if (!Array.isArray(payload.features) || payload.features.length === 0) {
-		throw new Error('Invalid features: must be a non-empty array');
-	}
+  if (!Array.isArray(payload.features) || payload.features.length === 0) {
+    throw new Error('Invalid features: must be a non-empty array');
+  }
 
-	const validFeatures = ['retention', 'erasure', 'masking'];
-	for (const feature of payload.features) {
-		if (!validFeatures.includes(feature)) {
-			throw new Error(`Invalid feature: ${feature}. Must be one of: ${validFeatures.join(', ')}`);
-		}
-	}
+  const validFeatures = ['retention', 'erasure', 'masking'];
+  for (const feature of payload.features) {
+    if (!validFeatures.includes(feature)) {
+      throw new Error(`Invalid feature: ${feature}. Must be one of: ${validFeatures.join(', ')}`);
+    }
+  }
 
-	// Validate dates
-	const issuedAt = new Date(payload.issued_at);
-	const expiresAt = new Date(payload.expires_at);
+  // Validate dates
+  const issuedAt = new Date(payload.issued_at);
+  const expiresAt = new Date(payload.expires_at);
 
-	if (Number.isNaN(issuedAt.getTime())) {
-		throw new Error('Invalid issued_at: must be a valid ISO 8601 date');
-	}
+  if (Number.isNaN(issuedAt.getTime())) {
+    throw new Error('Invalid issued_at: must be a valid ISO 8601 date');
+  }
 
-	if (Number.isNaN(expiresAt.getTime())) {
-		throw new Error('Invalid expires_at: must be a valid ISO 8601 date');
-	}
+  if (Number.isNaN(expiresAt.getTime())) {
+    throw new Error('Invalid expires_at: must be a valid ISO 8601 date');
+  }
 
-	if (expiresAt <= issuedAt) {
-		throw new Error('Invalid dates: expires_at must be after issued_at');
-	}
+  if (expiresAt <= issuedAt) {
+    throw new Error('Invalid dates: expires_at must be after issued_at');
+  }
 
-	// Validate optional fields
-	if (payload.max_runs_per_day !== undefined) {
-		if (typeof payload.max_runs_per_day !== 'number' || payload.max_runs_per_day <= 0) {
-			throw new Error('Invalid max_runs_per_day: must be a positive number');
-		}
-	}
+  // Validate optional fields
+  if (payload.max_runs_per_day !== undefined) {
+    if (typeof payload.max_runs_per_day !== 'number' || payload.max_runs_per_day <= 0) {
+      throw new Error('Invalid max_runs_per_day: must be a positive number');
+    }
+  }
 }
-
