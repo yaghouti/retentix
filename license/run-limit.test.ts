@@ -1,6 +1,6 @@
 import { existsSync, rmSync, writeFileSync } from 'node:fs';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { RunLimitTracker } from './run-limit.ts';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createRunLimitTracker, RunLimitTracker } from './run-limit.ts';
 import type { LicensePayload } from './types.ts';
 
 describe('RunLimitTracker', () => {
@@ -322,6 +322,62 @@ describe('RunLimitTracker', () => {
       // Cleanup
       rmSync('.test-runs-1.json');
       rmSync('.test-runs-2.json');
+    });
+  });
+
+  describe('error handling', () => {
+    it('should handle write errors gracefully and continue', () => {
+      // Create a tracker with a path that will fail to write
+      const readOnlyPath = '/invalid-path-that-cannot-be-written/.test-runs.json';
+      const errorTracker = new RunLimitTracker(readOnlyPath);
+
+      const license: LicensePayload = {
+        customer: 'Test Corp',
+        environments: ['production'],
+        expires_at: '2026-12-31T23:59:59.000Z',
+        features: ['retention'],
+        max_runs_per_day: 10,
+        issued_at: '2025-01-01T00:00:00.000Z',
+      };
+
+      // Spy on console.warn to verify error is logged
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      // Should not throw, but should log warning
+      const result = errorTracker.checkAndIncrement(license);
+
+      expect(result.allowed).toBe(true);
+      expect(result.currentCount).toBe(1);
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Failed to write run counter'));
+
+      warnSpy.mockRestore();
+    });
+  });
+
+  describe('createRunLimitTracker', () => {
+    it('should create tracker with default file', () => {
+      const tracker = createRunLimitTracker();
+      expect(tracker).toBeInstanceOf(RunLimitTracker);
+    });
+
+    it('should create tracker with custom file', () => {
+      const customFile = '.custom-runs.json';
+      const tracker = createRunLimitTracker(customFile);
+
+      const license: LicensePayload = {
+        customer: 'Test Corp',
+        environments: ['production'],
+        expires_at: '2026-12-31T23:59:59.000Z',
+        features: ['retention'],
+        max_runs_per_day: 10,
+        issued_at: '2025-01-01T00:00:00.000Z',
+      };
+
+      tracker.checkAndIncrement(license);
+      expect(existsSync(customFile)).toBe(true);
+
+      // Cleanup
+      rmSync(customFile);
     });
   });
 });
