@@ -369,6 +369,26 @@ describe('executeMaskingPostgres', () => {
       ).rejects.toThrow('Unknown masking strategy: unknown_strategy');
     });
 
+    it('should throw for invalid masking strategy kind', async () => {
+      const rule: MaskingRule = {
+        entity: 'users',
+        fields: {
+          email: { strategy: 'invalid_kind' },
+        },
+      };
+
+      // biome-ignore lint/suspicious/noExplicitAny: Testing invalid strategy kind
+      const strategies: Record<string, any> = {
+        invalid_kind: {
+          kind: 'invalid',
+        },
+      };
+
+      await expect(
+        executeMaskingPostgres(baseContext, mockEntity, rule, strategies)
+      ).rejects.toThrow('Unhandled masking strategy');
+    });
+
     it('should throw for masking rule with no fields', async () => {
       const rule: MaskingRule = {
         entity: 'users',
