@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { createRunLimitTracker } from '../license/run-limit.ts';
 import { loadAndVerifyLicense } from '../license/verify.ts';
 import { run } from './run.ts';
 
@@ -27,7 +28,16 @@ if (isHelpCommand) {
 
   const license = loadAndVerifyLicense(licenseToken);
 
-  run(args, license).catch((err) => {
+  // Check run limit (soft enforcement)
+  const runLimitTracker = createRunLimitTracker();
+  const limitResult = runLimitTracker.checkAndIncrement(license);
+
+  // Log limit status
+  if (limitResult.exceeded) {
+    console.warn(limitResult.message);
+  }
+
+  run(args, license, limitResult).catch((err) => {
     console.error('ERROR:', err.message);
     process.exit(1);
   });

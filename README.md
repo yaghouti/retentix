@@ -193,6 +193,7 @@ engine/                  # Execution engine
 license/                 # License enforcement
   ├── types.ts          # License payload types
   ├── verify.ts         # License verification logic
+  ├── run-limit.ts      # Soft run-limit enforcement
   └── README.md         # License documentation
 
 vendor/                  # License generation (vendor-only, not for customers)

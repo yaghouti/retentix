@@ -1,14 +1,29 @@
+import { FileAuditWriter } from '../engine/audit.ts';
+import type { RunLimitResult } from '../license/run-limit.ts';
 import type { LicensePayload } from '../license/types.ts';
 import { erasureCmd } from './commands/erasure.ts';
 import { maskingCmd } from './commands/masking.ts';
 import { retentionCmd } from './commands/retention.ts';
 import { validateCmd } from './commands/validate.ts';
 
-export async function run(args: string[], license: LicensePayload) {
+export async function run(args: string[], license: LicensePayload, limitResult?: RunLimitResult) {
   const [cmd, ...rest] = args;
 
   if (cmd === 'validate') return validateCmd(rest);
   if (cmd === '--help' || cmd === '-h' || !cmd) return showHelp();
+
+  // Log run limit to audit if exceeded
+  if (limitResult?.exceeded && limitResult.limit !== null) {
+    const audit = new FileAuditWriter(process.env.AUDIT_PATH || 'audit.jsonl');
+    await audit.record({
+      type: 'run_limit',
+      customer: license.customer,
+      currentCount: limitResult.currentCount,
+      limit: limitResult.limit,
+      exceeded: true,
+      timestamp: new Date().toISOString(),
+    });
+  }
 
   const [sub, ...subRest] = rest;
   if (cmd === 'retention') {

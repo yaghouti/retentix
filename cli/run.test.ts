@@ -1,4 +1,6 @@
+import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { RunLimitResult } from '../license/run-limit.ts';
 import type { LicensePayload } from '../license/types.ts';
 import { run } from './run.ts';
 
@@ -114,5 +116,91 @@ describe('run', () => {
     await run(['retention', 'run', 'policy.yaml'], retentionOnlyLicense);
 
     expect(retentionCmd).toHaveBeenCalledWith('run', ['policy.yaml']);
+  });
+
+  describe('run limit audit logging', () => {
+    const testAuditFile = 'test-audit.jsonl';
+
+    beforeEach(() => {
+      if (existsSync(testAuditFile)) {
+        rmSync(testAuditFile);
+      }
+      process.env.AUDIT_PATH = testAuditFile;
+    });
+
+    it('should log to audit when run limit is exceeded', async () => {
+      vi.mocked(retentionCmd).mockResolvedValue(undefined);
+
+      const limitResult: RunLimitResult = {
+        allowed: true,
+        currentCount: 5,
+        limit: 3,
+        exceeded: true,
+        message: 'Limit exceeded',
+      };
+
+      await run(['retention', 'run', 'policy.yaml'], mockLicense, limitResult);
+
+      expect(existsSync(testAuditFile)).toBe(true);
+
+      const auditContent = readFileSync(testAuditFile, 'utf8');
+      const auditEntry = JSON.parse(auditContent);
+
+      expect(auditEntry.type).toBe('run_limit');
+      expect(auditEntry.customer).toBe('Test Corp');
+      expect(auditEntry.currentCount).toBe(5);
+      expect(auditEntry.limit).toBe(3);
+      expect(auditEntry.exceeded).toBe(true);
+      expect(auditEntry.timestamp).toBeDefined();
+    });
+
+    it('should not log to audit when limit is not exceeded', async () => {
+      vi.mocked(retentionCmd).mockResolvedValue(undefined);
+
+      const limitResult: RunLimitResult = {
+        allowed: true,
+        currentCount: 2,
+        limit: 5,
+        exceeded: false,
+        message: 'Within limit',
+      };
+
+      await run(['retention', 'run', 'policy.yaml'], mockLicense, limitResult);
+
+      expect(existsSync(testAuditFile)).toBe(false);
+    });
+
+    it('should not log to audit when limit is null (no limit)', async () => {
+      vi.mocked(retentionCmd).mockResolvedValue(undefined);
+
+      const limitResult: RunLimitResult = {
+        allowed: true,
+        currentCount: 100,
+        limit: null,
+        exceeded: false,
+        message: 'No limit',
+      };
+
+      await run(['retention', 'run', 'policy.yaml'], mockLicense, limitResult);
+
+      expect(existsSync(testAuditFile)).toBe(false);
+    });
+
+    it('should not log to audit for validate command even if limit exceeded', async () => {
+      vi.mocked(validateCmd).mockResolvedValue(undefined);
+
+      const limitResult: RunLimitResult = {
+        allowed: true,
+        currentCount: 5,
+        limit: 3,
+        exceeded: true,
+        message: 'Limit exceeded',
+      };
+
+      await run(['validate', 'policy.yaml'], mockLicense, limitResult);
+
+      // Validate command returns early, so no audit logging
+      expect(existsSync(testAuditFile)).toBe(false);
+    });
   });
 });

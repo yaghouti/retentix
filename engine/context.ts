@@ -13,7 +13,11 @@ export interface AuditWriter {
   record(event: AuditEvent): Promise<void>;
 }
 
-export type AuditEvent = RetentionAuditEvent | ErasureAuditEvent | MaskingAuditEvent;
+export type AuditEvent =
+  | RetentionAuditEvent
+  | ErasureAuditEvent
+  | MaskingAuditEvent
+  | RunLimitAuditEvent;
 
 export interface RetentionAuditEvent {
   type: 'retention';
@@ -39,5 +43,14 @@ export interface MaskingAuditEvent {
   action: 'update' | 'none';
   affectedRows: number;
   dryRun: boolean;
+  timestamp: string;
+}
+
+export interface RunLimitAuditEvent {
+  type: 'run_limit';
+  customer: string;
+  currentCount: number;
+  limit: number;
+  exceeded: boolean;
   timestamp: string;
 }

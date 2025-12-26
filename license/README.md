@@ -37,9 +37,47 @@ eyJjdXN0b21lciI6IkNvbXBhbnkgTmFtZSIsLi4ufQ==.c2lnbmF0dXJlX2hlcmU=
   - `retention`: Time-based data retention rules
   - `erasure`: RTBF (Right To Be Forgotten) functionality
   - `masking`: Data masking/anonymization
-- **max_runs_per_day** (optional): Maximum number of executions per day
+- **max_runs_per_day** (optional): Maximum number of executions per day (soft limit - warns but doesn't block)
 - **issued_at**: ISO 8601 timestamp when the license was issued
 - **signature**: Ed25519 signature of the payload (base64 encoded)
+
+## Run Limit Enforcement
+
+The `max_runs_per_day` field enables **soft run-limit enforcement**:
+
+- **Soft Enforcement**: Execution is never blocked, even when the limit is exceeded
+- **Daily Counter**: Tracks runs per day in `.retentix-runs.json` file
+- **Warnings**: Displays warnings when limit is exceeded
+- **Audit Logging**: Violations are logged to the audit file for monitoring
+- **Automatic Reset**: Counter resets at midnight (UTC)
+
+### How It Works
+
+1. Each CLI execution increments the daily counter
+2. If limit is exceeded, a warning is displayed but execution continues
+3. Violations are logged to the audit file with customer info and counts
+4. Counter automatically resets for the next day
+
+### Example
+
+```bash
+# License with max_runs_per_day: 10
+# Run 11: Shows warning but continues
+⚠️  WARNING: Daily run limit exceeded (11/10). This is a soft limit - execution will continue, but please review your usage.
+```
+
+### Audit Log Entry
+
+```json
+{
+  "type": "run_limit",
+  "customer": "Acme Corporation",
+  "currentCount": 11,
+  "limit": 10,
+  "exceeded": true,
+  "timestamp": "2025-12-26T14:30:00.000Z"
+}
+```
 
 ## Usage
 
