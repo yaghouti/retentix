@@ -7,7 +7,7 @@
 
 **Deterministic Data Retention & GDPR Execution Engine**
 
-> 📖 **Looking for product information?** See [Product Documentation](docs/product/Retentix.md) for features, use cases, and deployment options.
+> 📖 **Documentation:** [Complete Documentation Index](docs/README.md) | [Product Overview](docs/product/overview.md) | [CLI Reference](docs/technical/cli-reference.md) | [Deployment Guide](docs/technical/deployment.md)
 
 ---
 
@@ -168,7 +168,8 @@ cli/                     # Command-line interface
       ├── validate.ts   # Validate policy files
       ├── retention.ts  # Run retention rules
       ├── masking.ts    # Run masking rules
-      └── erasure.ts    # Run erasure (RTBF)
+      ├── erasure.ts    # Run erasure (RTBF)
+      └── verify-audit.ts  # Verify audit log integrity
 
 policy/                  # Policy validation & parsing
   ├── types.ts          # Domain type definitions
@@ -183,8 +184,9 @@ engine/                  # Execution engine
   ├── erasure.ts        # Erasure (RTBF) execution
   ├── masking.ts        # Masking rule execution
   ├── context.ts        # Execution context types
-  ├── audit.ts          # Audit logging
-  ├── tamper-evident-audit.ts  # Tamper-evident audit with hash chain
+  ├── audit.ts          # File-based audit logging
+  ├── tamper-evident-audit.ts  # Hash-chained tamper-evident audit
+  ├── AUDIT.md          # Audit log documentation
   └── postgres/         # PostgreSQL implementations
       ├── client.ts     # Connection pool setup
       ├── retention.ts  # Retention queries
@@ -193,23 +195,42 @@ engine/                  # Execution engine
 
 license/                 # License enforcement
   ├── types.ts          # License payload types
-  ├── verify.ts         # License verification logic
-  ├── run-limit.ts      # Soft run-limit enforcement
-  └── README.md         # License documentation
+  ├── verify.ts         # Ed25519 signature verification
+  └── run-limit.ts      # Soft run-limit enforcement
 
-vendor/                  # License generation (vendor-only, not for customers)
-  ├── generate.ts       # License signing & key generation
-  ├── cli.ts            # CLI for generating licenses
-  ├── README.md         # Vendor documentation
+vendor/                  # License generation (vendor-only)
+  ├── generate.ts       # Key generation & license signing
+  ├── cli.ts            # Vendor CLI (retentix-vendor)
+  ├── README.md         # Vendor tools documentation
   └── *.test.ts         # Vendor tool tests
+
+docs/                    # Documentation (organized by audience)
+  ├── README.md         # Documentation index
+  ├── DOCUMENTATION_GUIDE.md  # Maintenance guide
+  ├── technical/        # For developers & operators
+  │   ├── architecture.md      # System design
+  │   ├── cli-reference.md     # Complete CLI docs
+  │   ├── deployment.md        # Production deployment
+  │   ├── execution-engine.md  # Engine internals
+  │   ├── licensing.md         # License system
+  │   ├── policy-dsl.md        # Policy language
+  │   └── security.md          # Security model
+  ├── product/          # For customers & prospects
+  │   └── overview.md          # Product overview
+  └── business/         # For sales & marketing
+      ├── pitch.md             # 1-page pitch
+      ├── pitch.pdf            # PDF version
+      ├── positioning.md       # Market positioning
+      ├── pilot-program.md     # Pilot structure
+      ├── roadmap.md           # Product roadmap
+      └── outreach/            # Sales materials
+          ├── guide.md         # Outreach best practices
+          └── templates.md     # Email templates
 
 examples/                # Example policies & usage
   ├── hr-policy.yaml    # Complete GDPR HR policy example
   ├── example.ts        # Policy loading demonstration
   └── README.md         # Examples documentation
-
-docs/                    # Documentation
-  └── Retentix.md        # Product & customer documentation
 ```
 
 ---
@@ -290,10 +311,34 @@ See [examples/README.md](examples/README.md) for policy examples and usage patte
 
 ## Documentation
 
-- **[Product Documentation](docs/product/Retentix.md)** - Features, use cases, deployment models, and licensing
-- **[Examples](examples/README.md)** - Policy examples and usage patterns
-- **[License Documentation](license/README.md)** - License enforcement and verification
-- **[Vendor Tools](vendor/README.md)** - License generation (internal use only)
+### 📚 Complete Documentation
+
+**[Documentation Index](docs/README.md)** - Start here for all documentation
+
+### Quick Links by Role
+
+**For Developers & Operators:**
+- [Architecture Overview](docs/technical/architecture.md) - System design and principles
+- [CLI Reference](docs/technical/cli-reference.md) - Complete command documentation
+- [Deployment Guide](docs/technical/deployment.md) - Docker, Kubernetes, CI/CD
+- [Policy DSL](docs/technical/policy-dsl.md) - Policy language reference
+- [Security Model](docs/technical/security.md) - Threat model and controls
+- [Licensing](docs/technical/licensing.md) - License format and verification
+- [Audit Logging](engine/AUDIT.md) - Tamper-evident audit logs
+
+**For Product Evaluation:**
+- [Product Overview](docs/product/overview.md) - What Retentix is and does
+- [1-Page Pitch](docs/business/pitch.pdf) - Executive summary (PDF)
+- [Pilot Program](docs/business/pilot-program.md) - How to get started
+
+**For Sales & Marketing:**
+- [Market Positioning](docs/business/positioning.md) - Competitive differentiation
+- [Outreach Guide](docs/business/outreach/guide.md) - Best practices and ICP
+- [Email Templates](docs/business/outreach/templates.md) - Ready-to-use emails
+
+**Additional Resources:**
+- [Examples](examples/README.md) - Sample policies and usage patterns
+- [Vendor Tools](vendor/README.md) - License generation (vendor-only)
 
 ---
 

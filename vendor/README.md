@@ -219,6 +219,6 @@ Check that `expires_at` is in the future and in ISO 8601 format with timezone (e
 ## Related Documentation
 
 - [License Verification](../license/README.md) - How licenses are verified in the application
-- [Product Documentation](../docs/product/Retentix.md) - Customer-facing documentation
+- [Product Documentation](../docs/product/retentix.md) - Customer-facing documentation
 - [Developer README](../README.md) - Development setup and testing
 
