@@ -141,3 +141,7 @@ vite.config.ts.timestamp-*
 # Keys and licenses
 keys.json
 *.key
+
+# Run limit counter
+.retentix-runs.json
+.test-runs*.json
