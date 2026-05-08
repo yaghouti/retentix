@@ -144,3 +144,5 @@ keys.json
 # Run limit counter
 .retentix-runs.json
 .test-runs*.json
+
+.idea
