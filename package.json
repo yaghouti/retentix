@@ -35,7 +35,7 @@
     "@types/pg": "^8.16.0",
     "@vitest/coverage-v8": "^4.0.17",
     "@vitest/ui": "^4.0.17",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vitest": "^4.0.17"
   },
   "homepage": "https://github.com/yaghouti/Retentix#readme",
